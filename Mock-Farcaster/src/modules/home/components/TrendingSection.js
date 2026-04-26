@@ -39,7 +39,7 @@ export default function TrendingSection({ channels, links, currentUser }) {
   }, [walletBalance]);
 
   return (
-    <aside className="space-y-4 fixed mt-4">
+    <aside className="space-y-4 lg:sticky lg:top-4 mt-4">
       <div className="rounded-xl flex flex-row items-center border border-white/10 bg-[#0b0b0f] p-2.5">
         <Search className="h-6 w-6 text-zinc-400" />
         <input

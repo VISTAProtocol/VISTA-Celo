@@ -278,7 +278,7 @@ export default function HomePage() {
                 </Button>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <Card className="bg-muted/40">
                   <CardContent className="space-y-1 p-4">
                     <p className="text-lg font-semibold tracking-tight">
@@ -394,7 +394,7 @@ export default function HomePage() {
             loop. Every dollar is traceable. Every second is provable.
           </p>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card className="bg-muted/35">
               <CardContent className="space-y-3 p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
@@ -503,7 +503,7 @@ export default function HomePage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-5">
-                  <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {roleCards[activeRole].metrics.map((metric) => (
                       <div
                         key={metric.label}

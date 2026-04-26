@@ -21,34 +21,50 @@ export function RoleGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  // Keep router in a ref so it never triggers re-runs of the effect.
+  const routerRef = useRef(router);
+  routerRef.current = router;
+
   const { openConnectModal } = useConnectModal();
   const openConnectModalRef = useRef(openConnectModal);
   openConnectModalRef.current = openConnectModal;
 
   const { address, isConnected, status } = useAccount();
+
   const [mounted, setMounted] = useState(false);
   const [checking, setChecking] = useState(true);
   const [canRender, setCanRender] = useState(false);
+  // Tracks whether a redirect has already been initiated to prevent re-running the effect.
+  const redirectingRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
+
+    // Don't re-run if we're already mid-redirect.
+    if (redirectingRef.current) return;
+
+    // Still waiting for wagmi to finish reconnecting from localStorage.
+    if (status === "connecting" || status === "reconnecting") return;
 
     let cancelled = false;
 
     async function resolveAccess() {
-      if (status === "connecting" || status === "reconnecting") {
-        return; // Wait for connection to resolve
-      }
-
       if (!isConnected || !address) {
-        router.replace("/");
-        openConnectModalRef.current?.();
+        // User has no wallet connected. Redirect once, then stop.
+        redirectingRef.current = true;
+        routerRef.current.replace("/");
+        // Only open the connect modal if we're in an environment that supports it
+        // (i.e., a desktop browser with a wallet extension). On mobile browsers
+        // without an injected provider, openConnectModal may still exist but
+        // attempting to open it causes a loop. We guard with a short delay so
+        // the router navigation can settle first.
+        setTimeout(() => {
+          openConnectModalRef.current?.();
+        }, 300);
         return;
       }
 
@@ -68,18 +84,23 @@ export function RoleGuard({
         if (cancelled) return;
 
         if (requireRegistration && !result.registered) {
-          router.replace(`/${role}/onboarding`);
+          redirectingRef.current = true;
+          routerRef.current.replace(`/${role}/onboarding`);
           return;
         }
 
         if (redirectIfRegisteredTo && result.registered) {
-          router.replace(redirectIfRegisteredTo);
+          redirectingRef.current = true;
+          routerRef.current.replace(redirectIfRegisteredTo);
           return;
         }
 
-        setCanRender(true);
+        if (!cancelled) {
+          setCanRender(true);
+        }
       } catch {
-        router.replace("/");
+        redirectingRef.current = true;
+        routerRef.current.replace("/");
       } finally {
         if (!cancelled) {
           setChecking(false);
@@ -94,16 +115,10 @@ export function RoleGuard({
     return () => {
       cancelled = true;
     };
-  }, [
-    address,
-    isConnected,
-    mounted,
-    redirectIfRegisteredTo,
-    requireRegistration,
-    role,
-    router,
-    status,
-  ]);
+    // NOTE: router is intentionally excluded — we use routerRef to avoid
+    // triggering this effect on every navigation, which causes the flash loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, isConnected, mounted, redirectIfRegisteredTo, requireRegistration, role, status]);
 
   if (!mounted || checking || !canRender) {
     return (
