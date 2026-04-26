@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronRight, Search } from "lucide-react";
 import VistaEarningsPanel from "@/modules/vista/VistaEarningsPanel";
+import VistaOnboardingCard from "@/modules/vista/components/VistaOnboardingCard";
 import { useMemo } from "react";
 import { useBalance } from "wagmi";
 import { MONAD_CHAIN_ID } from "@/lib/auth/monad-chain";
@@ -92,6 +93,8 @@ export default function TrendingSection({ channels, links, currentUser }) {
       {/* <p className="mb-3 text-sm font-semibold text-zinc-300">Wallet</p> */}
 
       <VistaEarningsPanel userWallet={currentUser?.address} />
+
+      <VistaOnboardingCard />
       {/* </div> */}
     </aside>
   );
