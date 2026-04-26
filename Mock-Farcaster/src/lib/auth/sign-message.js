@@ -7,7 +7,7 @@ export function buildWalletAuthMessage({
   issuedAt,
 }) {
   return [
-    "Sign in to Farcaster Monad App",
+    "Sign in to Farcaster Celo App",
     `Domain: ${domain}`,
     `URI: ${uri}`,
     `Address: ${address}`,

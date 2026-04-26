@@ -74,8 +74,8 @@ export function formatHourLabel(hour: number) {
   return `${start} - ${end}`
 }
 
-export function buildMonadExplorerUrl(type: "tx" | "address" | "token", value: string) {
-  const base = "https://testnet.monadexplorer.com"
+export function buildExplorerUrl(type: "tx" | "address" | "token", value: string) {
+  const base = "https://celo-sepolia.blockscout.com"
 
   if (type === "address") {
     return `${base}/address/${value}`
@@ -87,6 +87,9 @@ export function buildMonadExplorerUrl(type: "tx" | "address" | "token", value: s
 
   return `${base}/tx/${value}`
 }
+
+/** @deprecated use buildExplorerUrl */
+export const buildMonadExplorerUrl = buildExplorerUrl
 
 export function bytes32FromSeed(seed: string): `0x${string}` {
   return keccak256(toHex(seed))

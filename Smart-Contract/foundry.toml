@@ -19,3 +19,7 @@ celo_sepolia = "https://forno.celo-sepolia.celo-testnet.org"
 [etherscan]
 monad_testnet = { key = "placeholder" }
 celo_sepolia = { key = "placeholder", chain = 11142220 }
+
+#  https://forno.celo-sepolia.celo-testnet.org : 
+# 23950543
+#   ORACLE_PRIVATE_KEY  — private key of wallet set as authorizedOracle in VistaStream

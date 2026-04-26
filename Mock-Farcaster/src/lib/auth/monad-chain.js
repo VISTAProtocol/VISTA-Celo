@@ -14,10 +14,10 @@ export const MONAD_CHAIN_ID = parseChainId(process.env.NEXT_PUBLIC_MONAD_CHAIN_I
 
 export const monadChain = defineChain({
   id: MONAD_CHAIN_ID,
-  name: "Monad Testnet",
+  name: "Celo Sepolia",
   nativeCurrency: {
-    name: "MON",
-    symbol: "MON",
+    name: "Celo",
+    symbol: "CELO",
     decimals: 18,
   },
   rpcUrls: {
@@ -27,7 +27,7 @@ export const monadChain = defineChain({
   },
   blockExplorers: {
     default: {
-      name: "Monad Explorer",
+      name: "Celo Sepolia Explorer",
       url: process.env.NEXT_PUBLIC_MONAD_EXPLORER_URL || SDK_MONAD_EXPLORER_URL,
     },
   },

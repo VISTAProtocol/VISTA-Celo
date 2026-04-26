@@ -10,7 +10,8 @@ import {
   useSignMessage,
   useSwitchChain,
 } from "wagmi";
-import { Vista, MONAD_CHAIN_ID, performWalletSignIn } from "@/lib/vista-sdk";
+import { Vista, performWalletSignIn } from "@/lib/vista-sdk";
+import { MONAD_CHAIN_ID } from "@/lib/auth/monad-chain";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -154,6 +155,7 @@ export default function AuthPage() {
       await performWalletSignIn({
         address,
         chainId,
+        targetChainId: MONAD_CHAIN_ID,
         domain: window.location.host,
         uri: window.location.origin,
         nonceEndpoint: "/api/auth/nonce",
@@ -192,7 +194,7 @@ export default function AuthPage() {
       router.refresh();
     } catch {
       setErrorMessage(
-        "Sign-in wallet gagal. Pastikan kamu approve signature dan pakai Monad chain.",
+        "Sign-in wallet gagal. Pastikan kamu approve signature dan pakai Celo Sepolia chain.",
       );
     } finally {
       setIsSigningIn(false);
@@ -211,7 +213,7 @@ export default function AuthPage() {
           Wallet Authentication
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white">
-          Connect to Monad
+          Connect to Celo
         </h1>
         <p className="mt-2 text-sm text-zinc-400">
           Connect wallet, sign challenge, lalu session backend aktif otomatis.
@@ -249,8 +251,8 @@ export default function AuthPage() {
             : null}
 
           <p className="text-xs text-zinc-500">
-            Monad diprioritaskan: setelah connect, app akan meminta switch ke
-            chain Monad otomatis.
+            Celo Sepolia diprioritaskan: setelah connect, app akan meminta switch ke
+            chain Celo Sepolia otomatis.
           </p>
 
           {isConnected ? (

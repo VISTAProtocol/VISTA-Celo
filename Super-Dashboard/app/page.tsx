@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 
 const tickerItems = [
   "ATTENTION MONETIZATION PROTOCOL",
-  "VERIFIED ON MONAD TESTNET",
+  "VERIFIED ON CELO SEPOLIA",
   "USDC STREAMS EVERY 10 SECONDS",
   "OPEN SOURCE · PERMISSIONLESS",
   "ORACLE-VERIFIED ATTENTION",
@@ -100,7 +100,7 @@ const roleCards: Record<
     bullets: [
       "Connect wallet → watch → earn. That's the whole flow",
       "Attention verified by oracle, not just click fraud",
-      "See every dollar, every second, on Monad Testnet",
+      "See every dollar, every second, on Celo Sepolia",
     ],
     cta: "Enter as User",
   },
@@ -253,7 +253,7 @@ export default function HomePage() {
         <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="overflow-hidden rounded-[32px] border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 sm:p-10">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.26em] text-primary">
-              Live on Monad Testnet · Attention streaming
+              Live on Celo Sepolia · Attention streaming
             </div>
             <div className="mt-6 space-y-6">
               <div className="space-y-4">
@@ -404,7 +404,7 @@ export default function HomePage() {
                   Advertiser deposits
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Fund a campaign with mUSDC on Monad. Set your CPSv rate — cost
+                  Fund a campaign with mUSDC on Celo. Set your CPSv rate — cost
                   per verified second. Budget only drains when attention is
                   provably real.
                 </p>
@@ -560,9 +560,9 @@ export default function HomePage() {
             </p>
             <div className="mt-5 space-y-2 text-sm">
               <p>
-                <span className="font-semibold">Monad Testnet</span>{" "}
+                <span className="font-semibold">Celo Sepolia</span>{" "}
                 <span className="text-muted-foreground">
-                  Sub-second finality, EVM-compatible
+                  EVM-compatible, mobile-first testnet
                 </span>
               </p>
               <p>
@@ -660,7 +660,7 @@ export default function HomePage() {
             <div className="flex flex-col gap-0 sm:flex-row sm:items-center sm:gap-2">
               <span className="font-semibold text-foreground">VISTA Protocol</span>
               <span className="hidden opacity-40 sm:inline">·</span>
-              <span className="text-xs opacity-70">Monad Testnet · Not financial advice · Open source</span>
+              <span className="text-xs opacity-70">Celo Sepolia · Not financial advice · Open source</span>
             </div>
           </div>
           <div className="flex items-center gap-4">
