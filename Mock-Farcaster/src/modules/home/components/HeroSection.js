@@ -21,7 +21,7 @@ export default function HeroSection({ posts, ads = [], userWallet }) {
   }, []);
 
   const getVistaAdForIndex = (index) => {
-    if ((index + 1) % 10 !== 0) return null;
+    if ((index + 1) % 5 !== 0) return null;
     if (!vistaCampaigns || vistaCampaigns.length === 0) return null;
 
     const campaignIndex = Math.floor((index + 1) / 10) - 1;

@@ -23,7 +23,7 @@ export function VistaAdCard({ campaign, userWallet, onEarn }) {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        const visible = entry.intersectionRatio >= 0.5;
+        const visible = entry.intersectionRatio >= 0.25;
         setIsVisible(visible);
 
         if (visible && !isTracking) {
@@ -32,7 +32,7 @@ export function VistaAdCard({ campaign, userWallet, onEarn }) {
           stopTracking();
         }
       },
-      { threshold: 0.5 },
+      { threshold: 0.25 },
     );
 
     observer.observe(adRef.current);
