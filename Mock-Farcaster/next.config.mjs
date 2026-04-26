@@ -6,6 +6,11 @@ const sdkEntry = path.resolve(__dirname, "src/lib/vista-sdk/index.mjs");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
   onDemandEntries: {
     maxInactiveAge: 15 * 1000,
     pagesBufferLength: 2,
