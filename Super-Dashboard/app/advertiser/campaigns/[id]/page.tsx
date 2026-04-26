@@ -28,7 +28,7 @@ import { fetchJson } from "@/lib/http"
 import { contractAddresses, hasContractConfig, vistaEscrowAbi } from "@/lib/contracts"
 import type { CampaignDetailData } from "@/lib/types"
 import { buildMonadExplorerUrl, formatDateTime, formatUsdc, truncateAddress, truncateHash } from "@/lib/utils"
-import { celoSepolia, wagmiConfig } from "@/lib/wagmi"
+import { celoMainnet, wagmiConfig } from "@/lib/wagmi"
 
 function AudienceBreakdown({
   title,
@@ -106,8 +106,8 @@ export default function CampaignDetailPage() {
       let txHash: `0x${string}` | null = null
 
       if (hasContractConfig && contractAddresses.vistaEscrow) {
-        if (chainId !== celoSepolia.id) {
-          await switchChainAsync({ chainId: celoSepolia.id })
+        if (chainId !== celoMainnet.id) {
+          await switchChainAsync({ chainId: celoMainnet.id })
         }
 
         txHash = await writeContractAsync({
@@ -115,7 +115,7 @@ export default function CampaignDetailPage() {
           address: contractAddresses.vistaEscrow,
           functionName: "refundRemaining",
           args: [data.campaign.campaign_id_onchain as `0x${string}`],
-          chainId: celoSepolia.id,
+          chainId: celoMainnet.id,
         })
 
         await waitForTransactionReceipt(wagmiConfig, { hash: txHash })

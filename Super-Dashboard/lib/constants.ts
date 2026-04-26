@@ -4,12 +4,12 @@ export const APP_NAME = "VISTA Protocol";
 export const APP_TAGLINE =
   "A real-time oracle protocol that turns ad attention into a provable, streaming USDC payout.";
 
-export const CELO_SEPOLIA = {
-  id: 11142220,
-  name: "Celo Sepolia",
-  rpcUrl: "https://forno.celo-sepolia.celo-testnet.org",
+export const CELO_MAINNET = {
+  id: 42220,
+  name: "Celo",
+  rpcUrl: "https://forno.celo.org",
   currencySymbol: "CELO",
-  explorerUrl: "https://celo-sepolia.blockscout.com",
+  explorerUrl: "https://celoscan.io",
 } as const;
 
 export const preferenceOptions = [

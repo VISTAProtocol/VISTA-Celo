@@ -19,7 +19,7 @@ export function GET(request: Request) {
       statement: "Sign in to VISTA Protocol.",
       uri: origin,
       version: "1",
-      chainId: 11142220,
+      chainId: 42220,
       nonce,
     })
 

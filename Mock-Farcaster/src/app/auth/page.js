@@ -194,7 +194,7 @@ export default function AuthPage() {
       router.refresh();
     } catch {
       setErrorMessage(
-        "Sign-in wallet gagal. Pastikan kamu approve signature dan pakai Celo Sepolia chain.",
+        "Sign-in wallet gagal. Pastikan kamu approve signature dan pakai Celo chain.",
       );
     } finally {
       setIsSigningIn(false);
@@ -251,8 +251,8 @@ export default function AuthPage() {
             : null}
 
           <p className="text-xs text-zinc-500">
-            Celo Sepolia diprioritaskan: setelah connect, app akan meminta switch ke
-            chain Celo Sepolia otomatis.
+            Celo diprioritaskan: setelah connect, app akan meminta switch ke
+            chain Celo otomatis.
           </p>
 
           {isConnected ? (

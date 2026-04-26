@@ -47,7 +47,7 @@ import {
   cn,
   formatUsdc,
 } from "@/lib/utils";
-import { celoSepolia, wagmiConfig } from "@/lib/wagmi";
+import { celoMainnet, wagmiConfig } from "@/lib/wagmi";
 
 const VISTA_RATE = 0.000072; // USDC per viewer per second (fixed by VISTA Protocol)
 
@@ -354,8 +354,8 @@ export default function NewCampaignPage() {
         throw new Error("Ad duration must be greater than zero.");
       }
 
-      if (chainId !== celoSepolia.id) {
-        await switchChainAsync({ chainId: celoSepolia.id });
+      if (chainId !== celoMainnet.id) {
+        await switchChainAsync({ chainId: celoMainnet.id });
       }
 
       const campaignIdOnchain = bytes32FromSeed(`${title}-${Date.now()}`);
@@ -373,7 +373,7 @@ export default function NewCampaignPage() {
           address: contractAddresses.mockUsdc,
           functionName: "approve",
           args: [contractAddresses.vistaEscrow, amount],
-          chainId: celoSepolia.id,
+          chainId: celoMainnet.id,
         });
 
         await waitForTransactionReceipt(wagmiConfig, { hash: approvalHash });
@@ -390,7 +390,7 @@ export default function NewCampaignPage() {
             ratePerSecondOnchain,
             BigInt(duration),
           ],
-          chainId: celoSepolia.id,
+          chainId: celoMainnet.id,
         });
 
         await waitForTransactionReceipt(wagmiConfig, { hash: txHash });
@@ -921,7 +921,7 @@ export default function NewCampaignPage() {
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>1. Generate a deterministic bytes32 campaign ID.</p>
               <p>2. Approve mUSDC spend to the VistaEscrow contract.</p>
-              <p>3. Deposit budget on Celo Sepolia.</p>
+              <p>3. Deposit budget on Celo.</p>
               <p>4. Persist campaign metadata in Supabase.</p>
               <p>5. Show transaction hash with explorer link.</p>
             </CardContent>
