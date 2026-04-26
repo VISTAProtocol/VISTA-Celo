@@ -37,7 +37,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
 
     runBotDetection(session, score, payload.timestamp);
 
-    if (score >= 0.60) {
+    if (score >= 0.70) {
       session.pendingSeconds++;
       session.validSeconds++;
     }
