@@ -16,6 +16,10 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata = {
   title: "Farcaster Clone",
   description: "Homepage and basic login flow for a Farcaster-inspired app",
+  other: {
+    "talentapp:project_verification":
+      "be534ebffd928d4a8ffc5170697c3f71366faa288be39c83e62d0cd90b6a013b06955e98f3884817fcbc7dcf0748ffb5a6a5c2a6dc6bbbccde9709578ba6b509",
+  },
 };
 
 export default function RootLayout({ children }) {
