@@ -1,8 +1,11 @@
 import { defineChain, http } from "viem"
+import { celo, celoAlfajores } from "viem/chains"
 import { cookieStorage, createConfig, createStorage } from "wagmi"
 import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors"
 
 import { APP_NAME, MONAD_TESTNET } from "@/lib/constants"
+
+export { celo, celoAlfajores }
 
 const PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "vista-demo-walletconnect"
 
@@ -33,7 +36,7 @@ export const monadTestnet = defineChain({
 })
 
 export const wagmiConfig = createConfig({
-  chains: [monadTestnet],
+  chains: [monadTestnet, celo, celoAlfajores],
   connectors: [
     injected(),
     walletConnect({ projectId: PROJECT_ID }),
@@ -41,6 +44,8 @@ export const wagmiConfig = createConfig({
   ],
   transports: {
     [monadTestnet.id]: http(process.env.NEXT_PUBLIC_MONAD_RPC || MONAD_TESTNET.rpcUrl),
+    [celo.id]: http(),
+    [celoAlfajores.id]: http(),
   },
   storage: createStorage({
     storage: cookieStorage,

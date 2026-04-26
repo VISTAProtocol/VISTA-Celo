@@ -14,7 +14,8 @@ metadata_hash = "none"
 use_literal_content = true
 
 [rpc_endpoints]
-monad_testnet = "https://rpc.ankr.com/monad_testnet"
+celo_sepolia = "https://forno.celo-sepolia.celo-testnet.org"
 
 [etherscan]
 monad_testnet = { key = "placeholder" }
+celo_sepolia = { key = "placeholder", chain = 11142220 }

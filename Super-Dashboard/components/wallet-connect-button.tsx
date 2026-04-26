@@ -2,11 +2,26 @@
 
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { ChevronDown, Wallet } from "lucide-react"
+import { useEffect } from "react"
+import { useConnect } from "wagmi"
+import { injected } from "wagmi/connectors"
 
 import { Button, buttonVariants } from "@/components/ui/button"
+import { useMiniPay } from "@/hooks/useMiniPay"
 import { cn, truncateAddress } from "@/lib/utils"
 
 export function WalletConnectButton({ className }: { className?: string }) {
+  const { isMiniPay } = useMiniPay()
+  const { connect } = useConnect()
+
+  useEffect(() => {
+    if (isMiniPay) {
+      connect({ connector: injected({ target: "metaMask" }) })
+    }
+  }, [isMiniPay, connect])
+
+  if (isMiniPay) return null
+
   return (
     <ConnectButton.Custom>
       {({
