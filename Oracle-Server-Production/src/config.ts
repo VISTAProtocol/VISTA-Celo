@@ -1,33 +1,23 @@
 import { createPublicClient, createWalletClient, http } from 'viem';
+import { celoSepolia } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 
-const required = ['ORACLE_PRIVATE_KEY', 'MONAD_RPC_URL', 'ORACLE_SECRET'];
+const required = ['ORACLE_PRIVATE_KEY', 'RPC_URL', 'ORACLE_SECRET'];
 for (const key of required) {
   if (!process.env[key]) throw new Error(`Missing required env var: ${key}`);
 }
 
-const monadTestnet = {
-  id: 10143,
-  name: 'Monad Testnet',
-  network: 'monad-testnet',
-  nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
-  rpcUrls: {
-    default: { http: [process.env.MONAD_RPC_URL!] },
-    public: { http: [process.env.MONAD_RPC_URL!] },
-  },
-} as const;
-
 export const account = privateKeyToAccount(process.env.ORACLE_PRIVATE_KEY as `0x${string}`);
 
 export const publicClient = createPublicClient({
-  chain: monadTestnet,
-  transport: http(process.env.MONAD_RPC_URL),
+  chain: celoSepolia,
+  transport: http(process.env.RPC_URL),
 });
 
 export const walletClient = createWalletClient({
   account,
-  chain: monadTestnet,
-  transport: http(process.env.MONAD_RPC_URL),
+  chain: celoSepolia,
+  transport: http(process.env.RPC_URL),
 });
 
 export const VISTA_STREAM_ABI = [
