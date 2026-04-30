@@ -11,7 +11,7 @@ import {
   useSwitchChain,
 } from "wagmi";
 import { Vista, performWalletSignIn } from "@/lib/vista-sdk";
-import { CELO_CHAIN_ID } from "@/lib/auth/celo-chain";
+import { CELO_CHAIN_ID } from "@/lib/auth/chain";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -152,10 +152,11 @@ export default function AuthPage() {
     setIsSigningIn(true);
 
     try {
-      // Force switch to Celo before requesting the signature
       if (chainId !== CELO_CHAIN_ID) {
         if (!switchChainAsync) {
-          setErrorMessage("Wallet kamu tidak mendukung switch chain otomatis. Tolong pindah ke Celo secara manual.");
+          setErrorMessage(
+            "Wallet kamu tidak mendukung switch chain otomatis. Tolong pindah ke Celo Mainnet secara manual.",
+          );
           setIsSigningIn(false);
           return;
         }
@@ -204,7 +205,7 @@ export default function AuthPage() {
       router.refresh();
     } catch {
       setErrorMessage(
-        "Sign-in wallet gagal. Pastikan kamu approve signature dan pakai Celo chain.",
+        "Sign-in wallet gagal. Pastikan kamu approve signature dan pakai Celo Mainnet chain.",
       );
     } finally {
       setIsSigningIn(false);
@@ -223,7 +224,7 @@ export default function AuthPage() {
           Wallet Authentication
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white">
-          Connect to Celo
+          Connect to Celo Mainnet
         </h1>
         <p className="mt-2 text-sm text-zinc-400">
           Connect wallet, sign challenge, lalu session backend aktif otomatis.
@@ -261,8 +262,8 @@ export default function AuthPage() {
             : null}
 
           <p className="text-xs text-zinc-500">
-            Celo diprioritaskan: setelah connect, app akan meminta switch ke
-            chain Celo otomatis.
+            Celo Mainnet diprioritaskan: setelah connect, app akan meminta
+            switch ke chain Celo Mainnet otomatis.
           </p>
 
           {isConnected ? (

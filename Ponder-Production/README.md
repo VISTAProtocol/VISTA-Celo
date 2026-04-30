@@ -1,6 +1,6 @@
 # VISTA Ponder Indexer
 
-Listens to VISTA Protocol smart contract events on Monad testnet and forwards every event as a POST to the Dashboard API.
+Listens to VISTA Protocol smart contract events on Celo Mainnet and forwards every event as a POST to the Dashboard API.
 
 Ponder is the single source of truth for all on-chain data. It does **not** store anything — it only forwards.
 
@@ -30,7 +30,7 @@ cp .env.example .env
 
 | Variable                | How to get it                                                   |
 | ----------------------- | --------------------------------------------------------------- |
-| `PONDER_RPC_URL_10143`  | Pre-filled: Ankr public Monad testnet endpoint                  |
+| `PONDER_RPC_URL_42220`  | Pre-filled: Celo Mainnet public RPC endpoint                    |
 | `DASHBOARD_API_URL`     | URL of the Dashboard API service (e.g. `http://localhost:3031`) |
 | `DASHBOARD_API_SECRET`  | Must match the Dashboard API's `DASHBOARD_API_SECRET` env var   |
 | `VISTA_STREAM_ADDRESS`  | From `vista-contracts/deployments.json` after deploying         |
@@ -43,7 +43,7 @@ cp .env.example .env
 
 1. Run the deployment script: `forge script script/Deploy.s.sol --rpc-url $RPC_URL --broadcast`
 2. Note the transaction hash from the output
-3. Look it up on [Monad Testnet Explorer](https://testnet.monadexplorer.com)
+3. Look it up on [CeloScan](https://celoscan.io)
 4. Use the **block number** of that transaction as `START_BLOCK`
 
 This prevents Ponder from scanning the entire chain history from block 0.
@@ -100,4 +100,4 @@ pnpm start     # production mode
 
 - A failed POST to the Dashboard API logs an error and continues — it never crashes the indexer.
 - If Ponder itself restarts, it automatically resumes indexing from the last processed block.
-- Transport uses HTTP polling (not WebSocket) for Monad testnet compatibility.
+- Transport uses HTTP polling (not WebSocket) for Celo Mainnet compatibility.

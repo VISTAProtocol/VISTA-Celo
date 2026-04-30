@@ -6,7 +6,7 @@ import VistaEarningsPanel from "@/modules/vista/VistaEarningsPanel";
 import VistaOnboardingCard from "@/modules/vista/components/VistaOnboardingCard";
 import { useMemo } from "react";
 import { useBalance } from "wagmi";
-import { CELO_CHAIN_ID } from "@/lib/auth/celo-chain";
+import { CELO_CHAIN_ID } from "@/lib/auth/chain";
 
 export default function TrendingSection({ channels, links, currentUser }) {
   const walletAddress = currentUser?.address;

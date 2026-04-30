@@ -1,35 +1,39 @@
 # VISTA Oracle Server
 
-Receives attention heartbeats from the browser SDK and triggers smart contract payments on Monad testnet. Calls `VistaStream.startStream`, `tickStream`, and `endStream` on the oracle wallet's behalf.
+Receives attention heartbeats from the browser SDK and triggers smart contract payments on Celo Mainnet. Calls `VistaStream.startStream`, `tickStream`, and `endStream` on the oracle wallet's behalf.
 
 ## Setup
 
 **1. Deploy contracts and copy deployments.json**
+
 ```bash
 cd ../vista-contracts
-forge script script/Deploy.s.sol --broadcast --rpc-url $MONAD_RPC_URL --private-key $PRIVATE_KEY
+forge script script/Deploy.s.sol --broadcast --rpc-url $CELO_RPC_URL --private-key $PRIVATE_KEY
 cp deployments.json ../oracle-server/deployments.json
 ```
 
 **2. Install dependencies**
+
 ```bash
 cd oracle-server
 npm install
 ```
 
 **3. Configure environment**
+
 ```bash
 cp .env.example .env
 # Fill in:
 #   ORACLE_PRIVATE_KEY  — private key of wallet set as authorizedOracle in VistaStream
-#   MONAD_RPC_URL       — Monad testnet RPC endpoint
+#   CELO_RPC_URL       — Celo Mainnet RPC endpoint
 #   ORACLE_SECRET       — shared secret for SDK authentication
 ```
 
 **4. Register oracle wallet on-chain** (if deployer != oracle wallet)
+
 ```bash
 cast send $VISTA_STREAM_ADDRESS "setAuthorizedOracle(address)" $ORACLE_WALLET \
-  --rpc-url $MONAD_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY
+  --rpc-url $CELO_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY
 ```
 
 ## Run
@@ -70,6 +74,7 @@ curl -X POST http://localhost:3001/heartbeat \
 ```
 
 Response:
+
 ```json
 {
   "valid": true,
@@ -91,6 +96,7 @@ curl -X POST http://localhost:3001/session/end \
 ```
 
 Response:
+
 ```json
 { "success": true, "totalSeconds": 47 }
 ```
@@ -104,6 +110,7 @@ Response:
 ## Bot Detection
 
 Three checks run on every heartbeat:
+
 - **Score variance** < 0.001 over 10 samples → flagged
 - **Perfect score streak** (all 10 > 0.95) → flagged
 - **Interval regularity** variance < 10ms over 10 samples → flagged

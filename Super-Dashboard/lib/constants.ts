@@ -6,7 +6,7 @@ export const APP_TAGLINE =
 
 export const CELO_MAINNET = {
   id: 42220,
-  name: "Celo",
+  name: "Celo Mainnet",
   rpcUrl: "https://forno.celo.org",
   currencySymbol: "CELO",
   explorerUrl: "https://celoscan.io",

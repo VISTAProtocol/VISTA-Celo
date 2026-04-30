@@ -7,7 +7,7 @@ Next.js 14 dashboard for VISTA Protocol, a real-time attention monetization prot
 - Next.js 14 App Router
 - TypeScript
 - Tailwind CSS + shadcn/ui
-- RainbowKit + wagmi on Monad Testnet
+- RainbowKit + wagmi on Base Sepolia
 - Supabase PostgreSQL + Realtime
 - Recharts
 
@@ -22,7 +22,7 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=
 NEXT_PUBLIC_VISTA_STREAM_ADDRESS=
 NEXT_PUBLIC_VISTA_ESCROW_ADDRESS=
 NEXT_PUBLIC_MOCK_USDC_ADDRESS=
-NEXT_PUBLIC_MONAD_RPC=https://rpc.ankr.com/monad_testnet
+NEXT_PUBLIC_BASE_RPC=https://sepolia.base.org
 NEXT_PUBLIC_ORACLE_WS_URL=
 ORACLE_WEBHOOK_SECRET=
 ```

@@ -50,7 +50,7 @@ export const mockDb: {
     {
       id: "11111111-1111-4111-8111-111111111111",
       wallet_address: demoWallets.publisher,
-      platform_name: "CeloQuest",
+      platform_name: "BaseQuest",
       api_key: "vista_pub_84ec6d78-f9bf-4bea-a7ee-103dc7df6bc1",
       created_at: "2026-04-16T08:15:00.000Z",
     },
@@ -68,7 +68,7 @@ export const mockDb: {
       id: "33333333-3333-4333-8333-333333333333",
       campaign_id_onchain: bytes32("a"),
       advertiser_wallet: demoWallets.advertiser,
-      title: "Celo Gaming Sprint",
+      title: "Base Sepolia Gaming Sprint",
       creative_url:
         "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
       target_url: "https://vista.protocol/campaigns/base-sepolia-gaming-sprint",

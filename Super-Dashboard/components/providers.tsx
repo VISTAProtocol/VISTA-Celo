@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { type State, WagmiProvider, useAccount } from "wagmi";
 
 import { Toaster } from "@/components/ui/sonner";
-import { celoMainnet, wagmiConfig } from "@/lib/wagmi";
+import { celoNetwork, wagmiConfig } from "@/lib/wagmi";
 
 function AccountWatcher() {
   const { address } = useAccount();
@@ -70,7 +70,7 @@ function RainbowShell({ children }: { children: React.ReactNode }) {
         appName: "VISTA Protocol",
         learnMoreUrl: "https://celoscan.io",
       }}
-      initialChain={celoMainnet}
+      initialChain={celoNetwork}
       modalSize="compact"
       theme={theme}
     >

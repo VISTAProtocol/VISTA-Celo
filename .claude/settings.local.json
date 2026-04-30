@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cast call *)",
+      "Bash(cast balance *)",
+      "Bash(cast estimate *)",
+      "Bash(cast block *)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo/Smart-Contract-SDK submodule status)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files --error-unmatch Smart-Contract-SDK/lib/)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo rm -r --cached Smart-Contract-SDK/lib/)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo status Smart-Contract-SDK/lib/)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo status --short Smart-Contract-SDK/)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo status --short)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo diff --cached --name-only)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Smart-Contract-SDK/lib/)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Smart-Contract/lib/)"
+    ]
+  }
+}

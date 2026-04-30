@@ -4,7 +4,7 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { celoChain } from "@/lib/auth/celo-chain";
+import { celoChain } from "@/lib/auth/chain";
 
 function getInjectedProviders() {
   if (typeof window === "undefined") {

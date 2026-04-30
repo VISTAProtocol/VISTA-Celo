@@ -1,6 +1,0 @@
-node_modules
-.ponder
-.git
-*.log
-.DS_Store
-bun.lock

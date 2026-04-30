@@ -37,7 +37,7 @@ import {
   truncateAddress,
   truncateHash,
 } from "@/lib/utils";
-import { celoMainnet, wagmiConfig } from "@/lib/wagmi";
+import { celoNetwork, wagmiConfig } from "@/lib/wagmi";
 
 function AudienceBreakdown({
   title,
@@ -119,8 +119,8 @@ export default function CampaignDetailPage() {
       let txHash: `0x${string}` | null = null;
 
       if (hasContractConfig && contractAddresses.vistaEscrow) {
-        if (chainId !== celoMainnet.id) {
-          await switchChainAsync({ chainId: celoMainnet.id });
+        if (chainId !== celoNetwork.id) {
+          await switchChainAsync({ chainId: celoNetwork.id });
         }
 
         txHash = await writeContractAsync({
@@ -128,7 +128,7 @@ export default function CampaignDetailPage() {
           address: contractAddresses.vistaEscrow,
           functionName: "refundRemaining",
           args: [data.campaign.campaign_id_onchain as `0x${string}`],
-          chainId: celoMainnet.id,
+          chainId: celoNetwork.id,
         });
 
         await waitForTransactionReceipt(wagmiConfig, { hash: txHash });

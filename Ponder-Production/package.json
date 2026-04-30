@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ponder dev",
-    "start": "ponder start --schema public",
-    "codegen": "ponder codegen"
+    "dev": "rm -rf .ponder && node ./node_modules/.bin/ponder dev",
+    "start": "node ./node_modules/.bin/ponder start --schema public",
+    "codegen": "node ./node_modules/.bin/ponder codegen"
   },
   "dependencies": {
     "ponder": "latest",
