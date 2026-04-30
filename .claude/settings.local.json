@@ -13,7 +13,8 @@
       "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo status --short)",
       "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo diff --cached --name-only)",
       "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Smart-Contract-SDK/lib/)",
-      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Smart-Contract/lib/)"
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Smart-Contract/lib/)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Oracle-Server-Production/deployments.json)"
     ]
   }
 }
