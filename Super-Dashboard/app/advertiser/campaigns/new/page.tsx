@@ -403,7 +403,7 @@ export default function NewCampaignPage() {
         const ratePerSecondOnchain = parseUnits(VISTA_RATE.toFixed(6), 6);
 
         // Simulate first to surface the actual revert reason before writing
-        const { request: depositRequest } = await simulateContract(wagmiConfig, {
+        await simulateContract(wagmiConfig, {
           abi: vistaEscrowAbi,
           address: contractAddresses.vistaEscrow,
           functionName: "deposit",
@@ -417,7 +417,18 @@ export default function NewCampaignPage() {
           account: address,
         });
 
-        txHash = await writeContractAsync(depositRequest);
+        txHash = await writeContractAsync({
+          abi: vistaEscrowAbi,
+          address: contractAddresses.vistaEscrow,
+          functionName: "deposit",
+          args: [
+            campaignIdOnchain,
+            amount,
+            ratePerSecondOnchain,
+            BigInt(duration),
+          ],
+          chainId: celoMainnet.id,
+        });
 
         await waitForTransactionReceipt(wagmiConfig, { hash: txHash });
       } else {

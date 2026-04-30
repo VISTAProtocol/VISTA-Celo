@@ -705,13 +705,13 @@ var k = class {
     }
   },
   H = new k();
-var L = 84532,
-  O = "https://sepolia.base.org",
-  N = "https://sepolia.basescan.org";
+var L = 42220,
+  O = "https://forno.celo.org",
+  N = "https://celoscan.io";
 function T(w) {
   let { domain: t, uri: e, address: o, nonce: n, chainId: r, issuedAt: v } = w;
   return [
-    "Sign in to Farcaster Base Sepolia App",
+    "Sign in to Farcaster Celo App",
     `Domain: ${t}`,
     `URI: ${e}`,
     `Address: ${o}`,
@@ -726,7 +726,7 @@ async function F(w) {
   let {
       address: t,
       chainId: e,
-      targetChainId: o = 84532,
+      targetChainId: o = 42220,
       domain: n,
       uri: r,
       nonceEndpoint: v,
@@ -769,9 +769,9 @@ async function F(w) {
   if (!s.ok) throw new Error(x?.error ?? "Verify failed");
 }
 export {
-  L as BASE_CHAIN_ID,
-  N as BASE_EXPLORER_URL,
-  O as BASE_RPC_URL,
+  L as CELO_CHAIN_ID,
+  N as CELO_EXPLORER_URL,
+  O as CELO_RPC_URL,
   H as Vista,
   T as buildWalletAuthMessage,
   F as performWalletSignIn,

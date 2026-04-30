@@ -93,9 +93,9 @@ declare class Vista {
 }
 declare const vista: Vista;
 
-declare const BASE_CHAIN_ID = 84532;
-declare const BASE_RPC_URL = "https://sepolia.base.org";
-declare const BASE_EXPLORER_URL = "https://sepolia.basescan.org";
+declare const CELO_CHAIN_ID = 42220;
+declare const CELO_RPC_URL = "https://forno.celo.org";
+declare const CELO_EXPLORER_URL = "https://celoscan.io";
 interface WalletAuthMessageParams {
   domain: string;
   uri: string;
@@ -128,9 +128,9 @@ export {
   type EarningOverlayParams,
   type HeartbeatPayload,
   type HeartbeatResponse,
-  BASE_CHAIN_ID,
-  BASE_EXPLORER_URL,
-  BASE_RPC_URL,
+  CELO_CHAIN_ID,
+  CELO_EXPLORER_URL,
+  CELO_RPC_URL,
   type OnboardingParams,
   vista as Vista,
   type VistaConfig,
