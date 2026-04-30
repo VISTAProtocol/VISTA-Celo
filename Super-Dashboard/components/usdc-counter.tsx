@@ -1,8 +1,8 @@
 "use client";
 
-// import { Activity, Circle } from "lucide-react";
+import { Activity, Circle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getBrowserSupabaseClient } from "@/lib/supabase";
 import type { LiveTickEvent } from "@/lib/types";
 import { cn, normalizeWallet } from "@/lib/utils";
@@ -198,7 +198,7 @@ export function UsdcCounter({
         return;
       }
 
-      const secondsIncrement = payload.secondsElapsed ?? 10;
+      const secondsIncrement = payload.secondsElapsed ?? 5;
       const nextRate =
         payload.ratePerSecond ??
         (payload.amount > 0 ? payload.amount / secondsIncrement : 0);
@@ -252,9 +252,9 @@ export function UsdcCounter({
             timestamp: String(next.block_timestamp ?? new Date().toISOString()),
             ratePerSecond:
               Number(next.user_amount ?? 0) /
-              Math.max(Number(next.seconds_elapsed ?? 10), 1),
+              Math.max(Number(next.seconds_elapsed ?? 5), 1),
             verified: true,
-            secondsElapsed: Number(next.seconds_elapsed ?? 10),
+            secondsElapsed: Number(next.seconds_elapsed ?? 5),
           });
         },
       )
@@ -275,7 +275,7 @@ export function UsdcCounter({
         className,
       )}
     >
-      {/* <CardContent className="space-y-6 p-6 sm:p-8">
+      <CardContent className="space-y-6 p-6 sm:p-8">
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-2">
             <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">
@@ -284,7 +284,9 @@ export function UsdcCounter({
             <div className="flex items-baseline gap-2">
               <span className="text-lg text-muted-foreground">$</span>
               <span className="text-4xl font-semibold tracking-tight sm:text-5xl">
-                {formatUsdc(displayAmount)}
+                {displayAmount.toLocaleString(undefined, {
+                  maximumFractionDigits: 6,
+                })}
               </span>
               <span className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
                 USDC
@@ -324,7 +326,7 @@ export function UsdcCounter({
             {sessionId ? `${sessionId.slice(0, 10)}...` : "Waiting for stream"}
           </span>
         </div>
-      </CardContent> */}
+      </CardContent>
     </Card>
   );
 }

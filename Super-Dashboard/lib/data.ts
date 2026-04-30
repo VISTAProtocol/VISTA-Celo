@@ -31,7 +31,7 @@ import type {
 } from "@/lib/types";
 import {
   average,
-  buildMonadExplorerUrl,
+  buildExplorerUrl,
   buildVistaPublisherApiKey,
   dayKey,
   formatDateShort,
@@ -453,7 +453,9 @@ async function selectUsersByWallets(wallets: string[]): Promise<UserRecord[]> {
   }));
 }
 
-function buildAudienceAnalytics(users: UserRecord[]): CampaignAudienceAnalytics {
+function buildAudienceAnalytics(
+  users: UserRecord[],
+): CampaignAudienceAnalytics {
   const prefCounts = new Map<string, number>();
   for (const user of users) {
     for (const pref of user.preferences ?? []) {
@@ -524,6 +526,29 @@ async function selectReceipts(userWallet?: string) {
   return (data ?? []).map((row) =>
     normalizeReceipt(row as Record<string, unknown>),
   );
+}
+
+async function countReceiptsByCampaignIds(campaignIds: string[]) {
+  if (!campaignIds.length) {
+    return 0;
+  }
+
+  const supabase = createServerSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Supabase client is not configured");
+  }
+
+  const { count, error } = await supabase
+    .from("receipts")
+    .select("id", { count: "exact", head: true })
+    .in("campaign_id_onchain", campaignIds);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return count ?? 0;
 }
 
 export async function getRegistrationStatus(
@@ -729,9 +754,16 @@ export async function getAdvertiserDashboard(
   wallet: string,
 ): Promise<AdvertiserDashboardData> {
   const campaigns = await selectCampaignsByWallet(wallet);
-  const sessions = await selectSessions({
-    campaignIds: campaigns.map((campaign) => campaign.campaign_id_onchain),
-  });
+  const campaignIds = campaigns.map((campaign) => campaign.campaign_id_onchain);
+  const [sessions, totalReceipts] = await Promise.all([
+    selectSessions({ campaignIds }),
+    countReceiptsByCampaignIds(campaignIds),
+  ]);
+
+  const averageConversionRate =
+    sessions.length === 0
+      ? 0
+      : Number(((totalReceipts / sessions.length) * 100).toFixed(2));
 
   const stats = {
     activeCampaigns: campaigns.filter((campaign) => campaign.active).length,
@@ -741,7 +773,7 @@ export async function getAdvertiserDashboard(
     totalVerifiedViewerSeconds: sumNumbers(
       sessions.map((session) => session.seconds_verified),
     ),
-    averageConversionRate: 23.4,
+    averageConversionRate,
   };
 
   return {
@@ -985,6 +1017,7 @@ export async function recordTick(payload: OracleTickPayload) {
 
   // Deduplicate: Oracle and Ponder both call this endpoint for the same on-chain tick.
   // Return early if a tick for this session already exists within a 30-second window.
+  // Use .limit(1) instead of .maybeSingle() because multiple ticks can land in the window.
   const blockTs = new Date(payload.blockTimestamp).getTime();
   const dupCheck = await supabase
     .from("stream_ticks")
@@ -992,11 +1025,11 @@ export async function recordTick(payload: OracleTickPayload) {
     .eq("session_id_onchain", tickRecord.session_id_onchain)
     .gte("block_timestamp", new Date(blockTs - 30_000).toISOString())
     .lte("block_timestamp", new Date(blockTs + 30_000).toISOString())
-    .maybeSingle();
+    .limit(1);
 
   if (dupCheck.error) throw new Error(dupCheck.error.message);
-  if (dupCheck.data)
-    return normalizeTick(dupCheck.data as Record<string, unknown>);
+  if (dupCheck.data && dupCheck.data.length > 0)
+    return normalizeTick(dupCheck.data[0] as Record<string, unknown>);
 
   const sessionQuery = await supabase
     .from("sessions")
@@ -1109,6 +1142,14 @@ export async function createReceipt(payload: OracleReceiptPayload) {
     0,
   );
 
+  // Fallback: if no ticks exist in DB yet (race condition or decoding failure),
+  // derive vault credit amounts from the oracle-reported usdcPaid using standard
+  // 40% user / 50% publisher protocol split.
+  const effectiveUserAmount =
+    totalUserAmount > 0 ? totalUserAmount : payload.usdcPaid * 0.40;
+  const effectivePublisherAmount =
+    totalPublisherAmount > 0 ? totalPublisherAmount : payload.usdcPaid * 0.50;
+
   const receipt: ReceiptRecord = {
     id: crypto.randomUUID(),
     token_id: payload.tokenId ?? crypto.randomUUID(),
@@ -1132,13 +1173,13 @@ export async function createReceipt(payload: OracleReceiptPayload) {
   }
 
   // Create vault credits for user
-  if (totalUserAmount > 0) {
+  if (effectiveUserAmount > 0) {
     const userCredit: VaultCreditRecord = {
       id: crypto.randomUUID(),
       wallet_address: normalizeWallet(payload.userWallet),
       session_id_onchain: payload.sessionIdOnchain,
       campaign_id_onchain: payload.campaignIdOnchain,
-      amount: totalUserAmount,
+      amount: effectiveUserAmount,
       role: 0, // user
       credited_at: payload.mintedAt,
     };
@@ -1153,13 +1194,13 @@ export async function createReceipt(payload: OracleReceiptPayload) {
   }
 
   // Create vault credits for publisher
-  if (totalPublisherAmount > 0) {
+  if (effectivePublisherAmount > 0) {
     const publisherCredit: VaultCreditRecord = {
       id: crypto.randomUUID(),
       wallet_address: normalizeWallet(payload.publisherWallet),
       session_id_onchain: payload.sessionIdOnchain,
       campaign_id_onchain: payload.campaignIdOnchain,
-      amount: totalPublisherAmount,
+      amount: effectivePublisherAmount,
       role: 1, // publisher
       credited_at: payload.mintedAt,
     };
@@ -1317,7 +1358,7 @@ export async function getUserHistory(wallet: string): Promise<UserHistoryData> {
         earned: matchingReceipt?.usdc_paid ?? session.total_paid_usdc / 2,
         campaignTitle: matchingCampaign?.title ?? "Unknown campaign",
         receiptUrl: matchingReceipt
-          ? buildMonadExplorerUrl("token", matchingReceipt.token_id)
+          ? buildExplorerUrl("token", matchingReceipt.token_id)
           : null,
       };
     }),
@@ -1327,7 +1368,7 @@ export async function getUserHistory(wallet: string): Promise<UserHistoryData> {
       usdcEarned: receipt.usdc_paid,
       secondsVerified: receipt.seconds_verified,
       mintedAt: receipt.minted_at,
-      explorerUrl: buildMonadExplorerUrl("token", receipt.token_id),
+      explorerUrl: buildExplorerUrl("token", receipt.token_id),
     })),
   };
 }

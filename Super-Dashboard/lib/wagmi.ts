@@ -7,7 +7,7 @@ import { APP_NAME, CELO_MAINNET } from "@/lib/constants"
 
 const PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "vista-demo-walletconnect"
 
-const RPC_URL = process.env.NEXT_PUBLIC_MONAD_RPC || CELO_MAINNET.rpcUrl
+const RPC_URL = process.env.NEXT_PUBLIC_CELO_RPC || CELO_MAINNET.rpcUrl
 
 export const celoMainnet = celo
 

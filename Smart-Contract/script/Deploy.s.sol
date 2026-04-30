@@ -53,6 +53,8 @@ contract Deploy is Script {
         vm.serializeAddress(obj, "VistaReceipt", address(receipt));
         string memory finalJson = vm.serializeAddress(obj, "VistaStream", address(stream));
         vm.writeJson(finalJson, "./deployments.json");
+        // Automatically sync deployments.json to Oracle Server
+        vm.writeJson(finalJson, "../Oracle-Server-Production/deployments.json");
 
         console.log("=== VISTA Protocol Deployment ===");
         console.log("MockUSDC:    ", address(usdc));

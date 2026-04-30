@@ -89,7 +89,7 @@ export function buildExplorerUrl(type: "tx" | "address" | "token", value: string
 }
 
 /** @deprecated use buildExplorerUrl */
-export const buildMonadExplorerUrl = buildExplorerUrl
+export const buildCeloExplorerUrl = buildExplorerUrl;
 
 export function bytes32FromSeed(seed: string): `0x${string}` {
   return keccak256(toHex(seed))

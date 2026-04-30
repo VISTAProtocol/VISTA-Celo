@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { getSession, endSession } from '../services/sessionManager';
 import { tickStream, endStream } from '../services/contractCaller';
-import { syncTick, syncEnd } from '../services/dashboardSync';
+import { syncTick, syncEnd, verifyApiKey } from '../services/dashboardSync';
 
 const router = Router();
 
@@ -15,7 +15,8 @@ router.post('/end', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (apiKey !== process.env.ORACLE_SECRET) {
+    const isKeyValid = await verifyApiKey(apiKey);
+    if (!isKeyValid) {
       res.status(401).json({ error: 'unauthorized' });
       return;
     }

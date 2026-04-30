@@ -8,27 +8,27 @@ import type {
   UserRecord,
   VaultCreditRecord,
   VaultWithdrawalRecord,
-} from "@/lib/types"
+} from "@/lib/types";
 
-const bytes32 = (fill: string) => `0x${fill.repeat(64)}`
+const bytes32 = (fill: string) => `0x${fill.repeat(64)}`;
 
 export const demoWallets = {
   user: "0x1111111111111111111111111111111111111111",
   publisher: "0x2222222222222222222222222222222222222222",
   advertiser: "0x3333333333333333333333333333333333333333",
   secondUser: "0x4444444444444444444444444444444444444444",
-}
+};
 
 export const mockDb: {
-  users: UserRecord[]
-  publishers: PublisherRecord[]
-  advertisers: AdvertiserRecord[]
-  campaigns: CampaignRecord[]
-  sessions: SessionRecord[]
-  streamTicks: StreamTickRecord[]
-  receipts: ReceiptRecord[]
-  vaultCredits: VaultCreditRecord[]
-  vaultWithdrawals: VaultWithdrawalRecord[]
+  users: UserRecord[];
+  publishers: PublisherRecord[];
+  advertisers: AdvertiserRecord[];
+  campaigns: CampaignRecord[];
+  sessions: SessionRecord[];
+  streamTicks: StreamTickRecord[];
+  receipts: ReceiptRecord[];
+  vaultCredits: VaultCreditRecord[];
+  vaultWithdrawals: VaultWithdrawalRecord[];
 } = {
   users: [
     {
@@ -50,7 +50,7 @@ export const mockDb: {
     {
       id: "11111111-1111-4111-8111-111111111111",
       wallet_address: demoWallets.publisher,
-      platform_name: "MonadQuest",
+      platform_name: "CeloQuest",
       api_key: "vista_pub_84ec6d78-f9bf-4bea-a7ee-103dc7df6bc1",
       created_at: "2026-04-16T08:15:00.000Z",
     },
@@ -68,9 +68,10 @@ export const mockDb: {
       id: "33333333-3333-4333-8333-333333333333",
       campaign_id_onchain: bytes32("a"),
       advertiser_wallet: demoWallets.advertiser,
-      title: "Monad Gaming Sprint",
-      creative_url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
-      target_url: "https://vista.protocol/campaigns/monad-gaming-sprint",
+      title: "Celo Gaming Sprint",
+      creative_url:
+        "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+      target_url: "https://vista.protocol/campaigns/base-sepolia-gaming-sprint",
       total_budget: 2500,
       remaining_budget: 1764.558421,
       rate_per_second: 0.000072553,
@@ -86,7 +87,8 @@ export const mockDb: {
       campaign_id_onchain: bytes32("b"),
       advertiser_wallet: demoWallets.advertiser,
       title: "Healthy Wallet Habits",
-      creative_url: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+      creative_url:
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
       target_url: "https://vista.protocol/campaigns/healthy-wallet",
       total_budget: 1200,
       remaining_budget: 0,
@@ -249,4 +251,4 @@ export const mockDb: {
       minted_at: "2026-04-19T10:03:59.000Z",
     },
   ],
-}
+};

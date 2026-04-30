@@ -38,10 +38,10 @@ startWatchdog(async (session: SessionState) => {
       const tick = await tickStream(session, session.pendingSeconds);
       session.pendingSeconds = 0;
       session.totalPaid += tick.userAmount + tick.publisherAmount;
-      syncTick(tick, session);
+      await syncTick(tick, session); // await: tick must be in DB before syncEnd reads it
     }
     const txHash = await endStream(session);
-    syncEnd(session, txHash);
+    await syncEnd(session, txHash);
     endSession(session.sessionId);
   } catch (err) {
     console.error(

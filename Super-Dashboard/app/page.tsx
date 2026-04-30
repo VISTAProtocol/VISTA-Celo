@@ -404,9 +404,9 @@ export default function HomePage() {
                   Advertiser deposits
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Fund a campaign with mUSDC on Celo. Set your CPSv rate — cost
-                  per verified second. Budget only drains when attention is
-                  provably real.
+                  Fund a campaign with mUSDC on Celo. Set your CPSv rate
+                  — cost per verified second. Budget only drains when attention
+                  is provably real.
                 </p>
               </CardContent>
             </Card>
@@ -658,9 +658,13 @@ export default function HomePage() {
               />
             </div>
             <div className="flex flex-col gap-0 sm:flex-row sm:items-center sm:gap-2">
-              <span className="font-semibold text-foreground">VISTA Protocol</span>
+              <span className="font-semibold text-foreground">
+                VISTA Protocol
+              </span>
               <span className="hidden opacity-40 sm:inline">·</span>
-              <span className="text-xs opacity-70">Celo · Not financial advice · Open source</span>
+              <span className="text-xs opacity-70">
+                Celo · Not financial advice · Open source
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-4">

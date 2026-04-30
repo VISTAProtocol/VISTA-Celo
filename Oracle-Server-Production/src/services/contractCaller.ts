@@ -69,24 +69,37 @@ export async function tickStream(session: SessionState, seconds: number): Promis
 
   let userAmount = 0n;
   let publisherAmount = 0n;
+  let decoded = false;
+
+  console.log(`[${session.sessionId}] tickStream receipt has ${receipt.logs.length} log(s) to decode`);
 
   for (const log of receipt.logs) {
     try {
-      const decoded = decodeEventLog({
+      const decodedLog = decodeEventLog({
         abi: VISTA_STREAM_ABI,
         eventName: 'StreamTick',
         data: log.data,
         topics: log.topics,
       });
-      userAmount = decoded.args.userAmount;
-      publisherAmount = decoded.args.publisherAmount;
+      userAmount = decodedLog.args.userAmount;
+      publisherAmount = decodedLog.args.publisherAmount;
+      decoded = true;
+      console.log(`[${session.sessionId}] StreamTick decoded: userAmount=${userAmount} publisherAmount=${publisherAmount}`);
       break;
     } catch {
       // log belongs to a different event, skip
     }
   }
 
-  console.log(`[${session.sessionId}] TICK ${effectiveSeconds}s txHash:${hash}`);
+  if (!decoded) {
+    console.warn(
+      `[${session.sessionId}] WARNING: StreamTick event NOT found in ${receipt.logs.length} log(s). ` +
+      `This means the contract did not emit StreamTick — likely escrow is empty or not approved. ` +
+      `Raw logs: ${JSON.stringify(receipt.logs.map(l => ({ address: l.address, topics: l.topics })))}`
+    );
+  }
+
+  console.log(`[${session.sessionId}] TICK ${effectiveSeconds}s txHash:${hash} userAmount:${userAmount} publisherAmount:${publisherAmount}`);
 
   return {
     sessionId: session.sessionId,

@@ -6,7 +6,7 @@ import VistaEarningsPanel from "@/modules/vista/VistaEarningsPanel";
 import VistaOnboardingCard from "@/modules/vista/components/VistaOnboardingCard";
 import { useMemo } from "react";
 import { useBalance } from "wagmi";
-import { MONAD_CHAIN_ID } from "@/lib/auth/monad-chain";
+import { CELO_CHAIN_ID } from "@/lib/auth/celo-chain";
 
 export default function TrendingSection({ channels, links, currentUser }) {
   const walletAddress = currentUser?.address;
@@ -17,7 +17,7 @@ export default function TrendingSection({ channels, links, currentUser }) {
     isError: isBalanceError,
   } = useBalance({
     address: walletAddress,
-    chainId: MONAD_CHAIN_ID,
+    chainId: CELO_CHAIN_ID,
     query: {
       enabled: Boolean(walletAddress),
       refetchInterval: 15000,

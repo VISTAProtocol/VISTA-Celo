@@ -2,6 +2,8 @@ import { isAddress, parseAbi, type Address } from "viem"
 
 export const erc20Abi = parseAbi([
   "function approve(address spender, uint256 value) external returns (bool)",
+  "function allowance(address owner, address spender) external view returns (uint256)",
+  "function balanceOf(address account) external view returns (uint256)",
 ])
 
 export const vistaEscrowAbi = parseAbi([

@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { jsonError, jsonOk } from "@/lib/api"
+import { assertOracleSecret, jsonError, jsonOk } from "@/lib/api"
 import { createSession } from "@/lib/data"
 
 const schema = z.object({
@@ -13,6 +13,7 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   try {
+    assertOracleSecret(request)
     const parsed = schema.parse(await request.json())
     const session = await createSession(parsed)
     return jsonOk(session, 201)

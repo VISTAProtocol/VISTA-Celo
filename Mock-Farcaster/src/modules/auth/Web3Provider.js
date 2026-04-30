@@ -4,7 +4,7 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { monadChain } from "@/lib/auth/monad-chain";
+import { celoChain } from "@/lib/auth/celo-chain";
 
 function getInjectedProviders() {
   if (typeof window === "undefined") {
@@ -36,7 +36,9 @@ function pickProvider(predicate) {
 }
 
 function isBraveBrowser() {
-  return typeof navigator !== "undefined" && typeof navigator.brave !== "undefined";
+  return (
+    typeof navigator !== "undefined" && typeof navigator.brave !== "undefined"
+  );
 }
 
 function isBraveProvider(provider) {
@@ -49,7 +51,10 @@ function isBraveProvider(provider) {
   }
 
   const providerName = provider.providerInfo?.name;
-  if (typeof providerName === "string" && providerName.toLowerCase().includes("brave")) {
+  if (
+    typeof providerName === "string" &&
+    providerName.toLowerCase().includes("brave")
+  ) {
     return true;
   }
 
@@ -57,14 +62,14 @@ function isBraveProvider(provider) {
 }
 
 const wagmiConfig = createConfig({
-  chains: [monadChain],
+  chains: [celoChain],
   connectors: [
     injected({
       shimDisconnect: true,
     }),
   ],
   transports: {
-    [monadChain.id]: http(monadChain.rpcUrls.default.http[0]),
+    [celoChain.id]: http(celoChain.rpcUrls.default.http[0]),
   },
 });
 
@@ -78,7 +83,7 @@ export default function Web3Provider({ children }) {
             gcTime: 10 * 60 * 1000,
           },
         },
-      })
+      }),
   );
 
   return (

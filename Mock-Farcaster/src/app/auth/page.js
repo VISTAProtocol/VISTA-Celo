@@ -11,7 +11,7 @@ import {
   useSwitchChain,
 } from "wagmi";
 import { Vista, performWalletSignIn } from "@/lib/vista-sdk";
-import { MONAD_CHAIN_ID } from "@/lib/auth/monad-chain";
+import { CELO_CHAIN_ID } from "@/lib/auth/celo-chain";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -152,10 +152,20 @@ export default function AuthPage() {
     setIsSigningIn(true);
 
     try {
+      // Force switch to Celo before requesting the signature
+      if (chainId !== CELO_CHAIN_ID) {
+        if (!switchChainAsync) {
+          setErrorMessage("Wallet kamu tidak mendukung switch chain otomatis. Tolong pindah ke Celo secara manual.");
+          setIsSigningIn(false);
+          return;
+        }
+        await switchChainAsync({ chainId: CELO_CHAIN_ID });
+      }
+
       await performWalletSignIn({
         address,
-        chainId,
-        targetChainId: MONAD_CHAIN_ID,
+        chainId: CELO_CHAIN_ID,
+        targetChainId: CELO_CHAIN_ID,
         domain: window.location.host,
         uri: window.location.origin,
         nonceEndpoint: "/api/auth/nonce",
@@ -264,7 +274,7 @@ export default function AuthPage() {
                 {walletAddressLabel}
               </p>
               <p className="text-xs text-zinc-300">
-                Chain ID: {chainId ?? "-"} (target: {MONAD_CHAIN_ID})
+                Chain ID: {chainId ?? "-"} (target: {CELO_CHAIN_ID})
               </p>
 
               <button

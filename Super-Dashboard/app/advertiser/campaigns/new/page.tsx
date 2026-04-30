@@ -10,7 +10,7 @@ import {
   useSwitchChain,
   useWriteContract,
 } from "wagmi";
-import { waitForTransactionReceipt } from "wagmi/actions";
+import { readContract, simulateContract, waitForTransactionReceipt } from "wagmi/actions";
 
 import { MetricChartCard } from "@/components/metric-chart-card";
 import { PageHeader } from "@/components/page-header";
@@ -41,12 +41,7 @@ import {
   preferenceOptions,
 } from "@/lib/constants";
 import type { CampaignRecord, PreferenceOption } from "@/lib/types";
-import {
-  buildMonadExplorerUrl,
-  bytes32FromSeed,
-  cn,
-  formatUsdc,
-} from "@/lib/utils";
+import { buildExplorerUrl, bytes32FromSeed, cn, formatUsdc } from "@/lib/utils";
 import { celoMainnet, wagmiConfig } from "@/lib/wagmi";
 
 const VISTA_RATE = 0.000072; // USDC per viewer per second (fixed by VISTA Protocol)
@@ -368,19 +363,47 @@ export default function NewCampaignPage() {
       ) {
         const amount = parseUnits(totalBudget, 6);
 
-        const approvalHash = await writeContractAsync({
-          abi: erc20Abi,
-          address: contractAddresses.mockUsdc,
-          functionName: "approve",
-          args: [contractAddresses.vistaEscrow, amount],
-          chainId: celoMainnet.id,
-        });
+        // Check current allowance first to avoid unnecessary transactions
+        // and race conditions
+        const [currentAllowance, currentBalance] = await Promise.all([
+          readContract(wagmiConfig, {
+            abi: erc20Abi,
+            address: contractAddresses.mockUsdc,
+            functionName: "allowance",
+            args: [address, contractAddresses.vistaEscrow],
+          }) as Promise<bigint>,
+          readContract(wagmiConfig, {
+            abi: erc20Abi,
+            address: contractAddresses.mockUsdc,
+            functionName: "balanceOf",
+            args: [address],
+          }) as Promise<bigint>,
+        ]);
 
-        await waitForTransactionReceipt(wagmiConfig, { hash: approvalHash });
+        if (currentBalance < amount) {
+          throw new Error(
+            `Insufficient mUSDC balance. You have ${formatUsdc(Number(currentBalance) / 1e6)} but need ${formatUsdc(Number(amount) / 1e6)} mUSDC.`
+          );
+        }
+
+        if (currentAllowance < amount) {
+          const approvalHash = await writeContractAsync({
+            abi: erc20Abi,
+            address: contractAddresses.mockUsdc,
+            functionName: "approve",
+            args: [contractAddresses.vistaEscrow, amount],
+            chainId: celoMainnet.id,
+          });
+
+          await waitForTransactionReceipt(wagmiConfig, { hash: approvalHash });
+          // Wait 2 seconds for load-balanced RPC nodes to sync the new state
+          await new Promise((r) => setTimeout(r, 2000));
+        }
 
         const ratePerSecondOnchain = parseUnits(VISTA_RATE.toFixed(6), 6);
 
-        txHash = await writeContractAsync({
+        // Simulate first to surface the actual revert reason before writing
+        const { request: depositRequest } = await simulateContract(wagmiConfig, {
           abi: vistaEscrowAbi,
           address: contractAddresses.vistaEscrow,
           functionName: "deposit",
@@ -391,7 +414,10 @@ export default function NewCampaignPage() {
             BigInt(duration),
           ],
           chainId: celoMainnet.id,
+          account: address,
         });
+
+        txHash = await writeContractAsync(depositRequest);
 
         await waitForTransactionReceipt(wagmiConfig, { hash: txHash });
       } else {
@@ -633,7 +659,7 @@ export default function NewCampaignPage() {
                           />
                         </svg>
                         <p className="text-sm font-medium text-destructive">
-                          Upload failed
+                          Upload faileds
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {uploadError ?? "Please try again."}
@@ -940,7 +966,7 @@ export default function NewCampaignPage() {
                   <p className="text-muted-foreground">Transaction hash</p>
                   <Link
                     className="font-medium text-primary underline-offset-4 hover:underline break-all"
-                    href={buildMonadExplorerUrl("tx", launchResult.txHash)}
+                    href={buildExplorerUrl("tx", launchResult.txHash)}
                     target="_blank"
                   >
                     {launchResult.txHash}
@@ -958,7 +984,7 @@ export default function NewCampaignPage() {
                       size: "sm",
                       variant: "outline",
                     })}
-                    href={buildMonadExplorerUrl("tx", launchResult.txHash)}
+                    href={buildExplorerUrl("tx", launchResult.txHash)}
                     target="_blank"
                   >
                     View on Celo Explorer

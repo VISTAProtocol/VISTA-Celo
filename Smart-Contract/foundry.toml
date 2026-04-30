@@ -15,9 +15,10 @@ use_literal_content = true
 
 [rpc_endpoints]
 celo_sepolia = "https://forno.celo-sepolia.celo-testnet.org"
+celo = "https://forno.celo.org"
 
 [etherscan]
-monad_testnet = { key = "placeholder" }
+celo = { key = "placeholder", chain = 42220 }
 celo_sepolia = { key = "placeholder", chain = 11142220 }
 
 #  https://forno.celo-sepolia.celo-testnet.org : 

@@ -12,9 +12,6 @@ export async function GET(request) {
   try {
     const res = await fetch(`${dashboardUrl}/api/users/${userWallet}`, {
       cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${process.env.VISTA_DASHBOARD_TOKEN || ""}`,
-      },
     });
 
     if (!res.ok) {

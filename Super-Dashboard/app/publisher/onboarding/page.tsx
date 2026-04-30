@@ -1,49 +1,59 @@
-"use client"
+"use client";
 
-import { Copy, ExternalLink } from "lucide-react"
-import { useState } from "react"
-import { toast } from "sonner"
-import { useAccount } from "wagmi"
+import { Copy, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useAccount } from "wagmi";
 
-import { PageHeader } from "@/components/page-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { fetchJson } from "@/lib/http"
-import type { PublisherRecord } from "@/lib/types"
+import { PageHeader } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { fetchJson } from "@/lib/http";
+import type { PublisherRecord } from "@/lib/types";
 
 export default function PublisherOnboardingPage() {
-  const { address } = useAccount()
-  const [platformName, setPlatformName] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [result, setResult] = useState<PublisherRecord | null>(null)
+  const { address } = useAccount();
+  const [platformName, setPlatformName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [result, setResult] = useState<PublisherRecord | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (!address) return
+    event.preventDefault();
+    if (!address) return;
 
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
       const record = await fetchJson<PublisherRecord>("/api/publishers", {
         method: "POST",
         body: JSON.stringify({
           walletAddress: address,
           platformName,
         }),
-      })
-      setResult(record)
-      toast.success("Publisher profile created.")
+      });
+      setResult(record);
+      toast.success("Publisher profile created.");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to create publisher profile.")
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to create publisher profile.",
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
   async function copy(text: string) {
-    await navigator.clipboard.writeText(text)
-    toast.success("Copied to clipboard.")
+    await navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard.");
   }
 
   return (
@@ -63,7 +73,7 @@ export default function PublisherOnboardingPage() {
                 <Input
                   id="platformName"
                   onChange={(event) => setPlatformName(event.target.value)}
-                  placeholder="MonadQuest"
+                  placeholder="BaseQuest"
                   required
                   value={platformName}
                 />
@@ -73,7 +83,9 @@ export default function PublisherOnboardingPage() {
                 <Input id="walletAddress" readOnly value={address ?? ""} />
               </div>
               <Button disabled={isSubmitting} type="submit">
-                {isSubmitting ? "Generating API key..." : "Create publisher profile"}
+                {isSubmitting
+                  ? "Generating API key..."
+                  : "Create publisher profile"}
               </Button>
             </form>
           </CardContent>
@@ -83,13 +95,19 @@ export default function PublisherOnboardingPage() {
           <Card className="border-primary/30 bg-primary/5">
             <CardHeader>
               <CardTitle>Your API Key</CardTitle>
-              <CardDescription>Keep this safe. It is shown in full only here after creation.</CardDescription>
+              <CardDescription>
+                Keep this safe. It is shown in full only here after creation.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="rounded-2xl border border-border/70 bg-background/80 p-4">
                 <div className="flex items-center justify-between gap-4">
                   <code className="text-sm">{result.api_key}</code>
-                  <Button onClick={() => copy(result.api_key)} size="sm" variant="outline">
+                  <Button
+                    onClick={() => copy(result.api_key)}
+                    size="sm"
+                    variant="outline"
+                  >
                     <Copy className="size-4" />
                     Copy
                   </Button>
@@ -99,7 +117,7 @@ export default function PublisherOnboardingPage() {
               <div className="space-y-3 rounded-2xl border border-border/70 bg-background/80 p-4">
                 <p className="text-sm font-medium">Integration code</p>
                 <pre className="overflow-x-auto rounded-xl bg-muted/60 p-4 text-xs leading-6">
-{`npm install vista-protocol
+                  {`npm install vista-protocol
 
 import Vista from 'vista-protocol';
 
@@ -108,7 +126,9 @@ Vista.attachZone('your-element-id');`}
                 </pre>
                 <Button
                   onClick={() =>
-                    copy(`npm install vista-protocol\n\nimport Vista from 'vista-protocol';\n\nVista.init({ apiKey: '${result.api_key}' });\nVista.attachZone('your-element-id');`)
+                    copy(
+                      `npm install vista-protocol\n\nimport Vista from 'vista-protocol';\n\nVista.init({ apiKey: '${result.api_key}' });\nVista.attachZone('your-element-id');`,
+                    )
                   }
                   size="sm"
                   variant="outline"
@@ -131,7 +151,9 @@ Vista.attachZone('your-element-id');`}
           <Card>
             <CardHeader>
               <CardTitle>What you get</CardTitle>
-              <CardDescription>Once created, your publisher profile unlocks:</CardDescription>
+              <CardDescription>
+                Once created, your publisher profile unlocks:
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>1. A unique `vista_pub_*` API key for your platform.</p>
@@ -142,5 +164,5 @@ Vista.attachZone('your-element-id');`}
         )}
       </div>
     </div>
-  )
+  );
 }

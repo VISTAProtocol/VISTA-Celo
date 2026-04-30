@@ -1,12 +1,15 @@
 "use client";
 
+const DASHBOARD_BASE_URL =
+  process.env.NEXT_PUBLIC_VISTA_DASHBOARD_URL || "http://localhost:3031";
+
 const ONBOARDING_LINKS = [
   {
     role: "Advertiser",
     tagline: "Reach real, attentive audiences",
     description:
       "Run targeted ad campaigns and only pay when users genuinely engage with your content.",
-    href: "https://vista-dashboard-celo.vercel.app/advertiser/onboarding",
+    href: `${DASHBOARD_BASE_URL}/advertiser/onboarding`,
     accent: "from-violet-500 to-indigo-600",
     badgeColor: "bg-violet-500/15 text-violet-300 border-violet-500/25",
     arrowColor: "text-violet-400",
@@ -30,7 +33,7 @@ const ONBOARDING_LINKS = [
     tagline: "Monetise your platform passively",
     description:
       "Integrate VISTA ads into your app or feed and earn USDC every time your users view them.",
-    href: "https://vista-dashboard-celo.vercel.app/publisher/onboarding",
+    href: `${DASHBOARD_BASE_URL}/publisher/onboarding`,
     accent: "from-emerald-500 to-teal-600",
     badgeColor: "bg-emerald-500/15 text-emerald-300 border-emerald-500/25",
     arrowColor: "text-emerald-400",
@@ -57,9 +60,7 @@ export default function VistaOnboardingCard() {
     <div className="rounded-2xl border border-white/10 bg-[#0b0b0f] p-4 space-y-3">
       {/* Header */}
       <div className="space-y-0.5">
-        <p className="text-sm font-semibold text-zinc-200">
-          Grow with VISTA
-        </p>
+        <p className="text-sm font-semibold text-zinc-200">Grow with VISTA</p>
         <p className="text-xs text-zinc-500 leading-relaxed">
           Join the attention-based ad network — as an advertiser or a publisher.
         </p>
@@ -68,7 +69,16 @@ export default function VistaOnboardingCard() {
       {/* Cards */}
       <div className="space-y-2">
         {ONBOARDING_LINKS.map(
-          ({ role, tagline, description, href, accent, badgeColor, arrowColor, icon }) => (
+          ({
+            role,
+            tagline,
+            description,
+            href,
+            accent,
+            badgeColor,
+            arrowColor,
+            icon,
+          }) => (
             <a
               key={role}
               href={href}

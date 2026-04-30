@@ -1,22 +1,24 @@
-import { createPublicClient, createWalletClient, http } from 'viem';
-import { celoSepolia } from 'viem/chains';
-import { privateKeyToAccount } from 'viem/accounts';
+import { createPublicClient, createWalletClient, http } from "viem";
+import { celo } from "viem/chains";
+import { privateKeyToAccount } from "viem/accounts";
 
-const required = ['ORACLE_PRIVATE_KEY', 'RPC_URL', 'ORACLE_SECRET'];
+const required = ["ORACLE_PRIVATE_KEY", "RPC_URL"];
 for (const key of required) {
   if (!process.env[key]) throw new Error(`Missing required env var: ${key}`);
 }
 
-export const account = privateKeyToAccount(process.env.ORACLE_PRIVATE_KEY as `0x${string}`);
+export const account = privateKeyToAccount(
+  process.env.ORACLE_PRIVATE_KEY as `0x${string}`,
+);
 
 export const publicClient = createPublicClient({
-  chain: celoSepolia,
+  chain: celo,
   transport: http(process.env.RPC_URL),
 });
 
 export const walletClient = createWalletClient({
   account,
-  chain: celoSepolia,
+  chain: celo,
   transport: http(process.env.RPC_URL),
 });
 

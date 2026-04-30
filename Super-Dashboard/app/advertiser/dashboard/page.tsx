@@ -99,7 +99,6 @@ export default function AdvertiserDashboardPage() {
         <StatCard
           title="Average conversion rate"
           value={data.stats.averageConversionRate}
-          hint="Hackathon placeholder"
           icon={MousePointerClick}
         />
       </div>

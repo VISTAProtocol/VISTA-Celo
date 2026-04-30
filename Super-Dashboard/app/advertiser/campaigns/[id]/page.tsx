@@ -1,21 +1,20 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
-import { Coins, Eye, Timer, Users } from "lucide-react"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
-import { useChainId, useSwitchChain, useWriteContract } from "wagmi"
-import { waitForTransactionReceipt } from "wagmi/actions"
-
-import { LoadingScreen } from "@/components/loading-screen"
-import { MetricChartCard } from "@/components/metric-chart-card"
-import { PageHeader } from "@/components/page-header"
-import { StatCard } from "@/components/stat-card"
-import { Badge } from "@/components/ui/badge"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import Image from "next/image";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { Coins, Eye, Timer, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useChainId, useSwitchChain, useWriteContract } from "wagmi";
+import { waitForTransactionReceipt } from "wagmi/actions";
+import { LoadingScreen } from "@/components/loading-screen";
+import { MetricChartCard } from "@/components/metric-chart-card";
+import { PageHeader } from "@/components/page-header";
+import { StatCard } from "@/components/stat-card";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -23,23 +22,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { fetchJson } from "@/lib/http"
-import { contractAddresses, hasContractConfig, vistaEscrowAbi } from "@/lib/contracts"
-import type { CampaignDetailData } from "@/lib/types"
-import { buildMonadExplorerUrl, formatDateTime, formatUsdc, truncateAddress, truncateHash } from "@/lib/utils"
-import { celoMainnet, wagmiConfig } from "@/lib/wagmi"
+} from "@/components/ui/table";
+import { fetchJson } from "@/lib/http";
+import {
+  contractAddresses,
+  hasContractConfig,
+  vistaEscrowAbi,
+} from "@/lib/contracts";
+import type { CampaignDetailData } from "@/lib/types";
+import {
+  formatDateTime,
+  buildExplorerUrl,
+  formatUsdc,
+  truncateAddress,
+  truncateHash,
+} from "@/lib/utils";
+import { celoMainnet, wagmiConfig } from "@/lib/wagmi";
 
 function AudienceBreakdown({
   title,
   items,
   emptyText,
 }: {
-  title: string
-  items: Array<{ label: string; count: number }>
-  emptyText: string
+  title: string;
+  items: Array<{ label: string; count: number }>;
+  emptyText: string;
 }) {
-  const max = items[0]?.count ?? 1
+  const max = items[0]?.count ?? 1;
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-semibold">{title}</h3>
@@ -51,7 +60,9 @@ function AudienceBreakdown({
             <div key={item.label} className="space-y-1">
               <div className="flex items-center justify-between text-sm">
                 <span className="capitalize">{item.label}</span>
-                <span className="tabular-nums text-muted-foreground">{item.count}</span>
+                <span className="tabular-nums text-muted-foreground">
+                  {item.count}
+                </span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
@@ -64,50 +75,52 @@ function AudienceBreakdown({
         </div>
       )}
     </div>
-  )
+  );
 }
 
 export default function CampaignDetailPage() {
-  const params = useParams<{ id: string }>()
-  const router = useRouter()
-  const chainId = useChainId()
-  const { switchChainAsync } = useSwitchChain()
-  const { writeContractAsync } = useWriteContract()
-  const [data, setData] = useState<CampaignDetailData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [isRefunding, setIsRefunding] = useState(false)
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const chainId = useChainId();
+  const { switchChainAsync } = useSwitchChain();
+  const { writeContractAsync } = useWriteContract();
+  const [data, setData] = useState<CampaignDetailData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isRefunding, setIsRefunding] = useState(false);
 
   useEffect(() => {
-    if (!params?.id) return
+    if (!params?.id) return;
 
-    let cancelled = false
+    let cancelled = false;
 
     async function load() {
-      const result = await fetchJson<CampaignDetailData>(`/api/campaigns/${params.id}`)
+      const result = await fetchJson<CampaignDetailData>(
+        `/api/campaigns/${params.id}`,
+      );
       if (!cancelled) {
-        setData(result)
-        setLoading(false)
+        setData(result);
+        setLoading(false);
       }
     }
 
-    void load()
+    void load();
 
     return () => {
-      cancelled = true
-    }
-  }, [params?.id])
+      cancelled = true;
+    };
+  }, [params?.id]);
 
   async function handleRefund() {
-    if (!data) return
+    if (!data) return;
 
     try {
-      setIsRefunding(true)
+      setIsRefunding(true);
 
-      let txHash: `0x${string}` | null = null
+      let txHash: `0x${string}` | null = null;
 
       if (hasContractConfig && contractAddresses.vistaEscrow) {
         if (chainId !== celoMainnet.id) {
-          await switchChainAsync({ chainId: celoMainnet.id })
+          await switchChainAsync({ chainId: celoMainnet.id });
         }
 
         txHash = await writeContractAsync({
@@ -116,40 +129,50 @@ export default function CampaignDetailPage() {
           functionName: "refundRemaining",
           args: [data.campaign.campaign_id_onchain as `0x${string}`],
           chainId: celoMainnet.id,
-        })
+        });
 
-        await waitForTransactionReceipt(wagmiConfig, { hash: txHash })
+        await waitForTransactionReceipt(wagmiConfig, { hash: txHash });
       } else {
-        toast.warning("Contract config missing, refund is running in demo mode only.")
+        toast.warning(
+          "Contract config missing, refund is running in demo mode only.",
+        );
       }
 
       await fetchJson(`/api/campaigns/${data.campaign.id}`, {
         method: "PATCH",
         body: JSON.stringify({ active: false }),
-      })
-      toast.success("Campaign ended and marked for refund.")
-      router.refresh()
+      });
+      toast.success("Campaign ended and marked for refund.");
+      router.refresh();
       setData((current) =>
         current
           ? {
               ...current,
               campaign: { ...current.campaign, active: false },
             }
-          : current
-      )
+          : current,
+      );
 
       if (txHash) {
-        window.open(buildMonadExplorerUrl("tx", txHash), "_blank", "noopener,noreferrer")
+        window.open(
+          buildExplorerUrl("tx", txHash),
+          "_blank",
+          "noopener,noreferrer",
+        );
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to process refund.")
+      toast.error(
+        error instanceof Error ? error.message : "Unable to process refund.",
+      );
     } finally {
-      setIsRefunding(false)
+      setIsRefunding(false);
     }
   }
 
   if (loading || !data) {
-    return <LoadingScreen description="Loading campaign analytics, viewer trends, and session detail." />
+    return (
+      <LoadingScreen description="Loading campaign analytics, viewer trends, and session detail." />
+    );
   }
 
   return (
@@ -180,10 +203,28 @@ export default function CampaignDetailPage() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard icon={Users} title="Total viewers" value={data.stats.totalViewers} />
-        <StatCard icon={Timer} title="Total seconds" value={data.stats.totalSecondsVerified} />
-        <StatCard icon={Coins} title="Total USDC spent" value={data.stats.totalUsdcSpent} format="usdc" />
-        <StatCard icon={Eye} title="Remaining budget" value={data.stats.remainingBudget} format="usdc" />
+        <StatCard
+          icon={Users}
+          title="Total viewers"
+          value={data.stats.totalViewers}
+        />
+        <StatCard
+          icon={Timer}
+          title="Total seconds"
+          value={data.stats.totalSecondsVerified}
+        />
+        <StatCard
+          icon={Coins}
+          title="Total USDC spent"
+          value={data.stats.totalUsdcSpent}
+          format="usdc"
+        />
+        <StatCard
+          icon={Eye}
+          title="Remaining budget"
+          value={data.stats.remainingBudget}
+          format="usdc"
+        />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -216,20 +257,26 @@ export default function CampaignDetailPage() {
               </div>
               <div className="flex items-center justify-between gap-4">
                 <span className="text-muted-foreground">Campaign ID</span>
-                <span className="font-medium">{truncateHash(data.campaign.campaign_id_onchain)}</span>
+                <span className="font-medium">
+                  {truncateHash(data.campaign.campaign_id_onchain)}
+                </span>
               </div>
               <div className="flex items-center justify-between gap-4">
                 <span className="text-muted-foreground">Rate per second</span>
-                <span className="font-medium">{formatUsdc(data.campaign.rate_per_second)} USDC</span>
+                <span className="font-medium">
+                  {formatUsdc(data.campaign.rate_per_second)} USDC
+                </span>
               </div>
               <div className="flex items-start justify-between gap-4">
                 <span className="text-muted-foreground">Audience filters</span>
                 <div className="flex max-w-[280px] flex-wrap justify-end gap-2">
-                  {(data.campaign.target_preferences ?? []).map((preference) => (
-                    <Badge key={preference} variant="outline">
-                      {preference}
-                    </Badge>
-                  ))}
+                  {(data.campaign.target_preferences ?? []).map(
+                    (preference) => (
+                      <Badge key={preference} variant="outline">
+                        {preference}
+                      </Badge>
+                    ),
+                  )}
                   {(data.campaign.target_locations ?? []).map((location) => (
                     <Badge key={location} variant="outline">
                       {location}
@@ -244,16 +291,22 @@ export default function CampaignDetailPage() {
 
       <div className="rounded-[28px] border border-border/70 bg-card/90 p-4 sm:p-6">
         <div className="mb-6">
-          <h2 className="text-xl font-semibold tracking-tight">Audience Analytics</h2>
-          <p className="text-sm text-muted-foreground">Demographic breakdown of verified viewers for this campaign.</p>
+          <h2 className="text-xl font-semibold tracking-tight">
+            Audience Analytics
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Demographic breakdown of verified viewers for this campaign.
+          </p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           <AudienceBreakdown
             title="Top Preferences"
-            items={data.audienceAnalytics.preferenceBreakdown.slice(0, 8).map((item) => ({
-              label: item.preference,
-              count: item.count,
-            }))}
+            items={data.audienceAnalytics.preferenceBreakdown
+              .slice(0, 8)
+              .map((item) => ({
+                label: item.preference,
+                count: item.count,
+              }))}
             emptyText="No preference data yet."
           />
           <AudienceBreakdown
@@ -266,10 +319,12 @@ export default function CampaignDetailPage() {
           />
           <AudienceBreakdown
             title="Top Locations"
-            items={data.audienceAnalytics.locationBreakdown.slice(0, 8).map((item) => ({
-              label: item.location,
-              count: item.count,
-            }))}
+            items={data.audienceAnalytics.locationBreakdown
+              .slice(0, 8)
+              .map((item) => ({
+                label: item.location,
+                count: item.count,
+              }))}
             emptyText="No location data yet."
           />
         </div>
@@ -278,7 +333,9 @@ export default function CampaignDetailPage() {
       <div className="rounded-[28px] border border-border/70 bg-card/90 p-4 sm:p-6">
         <div className="mb-4">
           <h2 className="text-xl font-semibold tracking-tight">Sessions</h2>
-          <p className="text-sm text-muted-foreground">Every verified session linked to this campaign.</p>
+          <p className="text-sm text-muted-foreground">
+            Every verified session linked to this campaign.
+          </p>
         </div>
         <Table>
           <TableHeader>
@@ -293,7 +350,9 @@ export default function CampaignDetailPage() {
           <TableBody>
             {data.sessions.map((session) => (
               <TableRow key={session.id}>
-                <TableCell className="font-medium">{truncateHash(session.sessionIdOnchain)}</TableCell>
+                <TableCell className="font-medium">
+                  {truncateHash(session.sessionIdOnchain)}
+                </TableCell>
                 <TableCell>{truncateAddress(session.userWallet)}</TableCell>
                 <TableCell>{session.secondsVerified}</TableCell>
                 <TableCell>{formatUsdc(session.usdcPaid)}</TableCell>
@@ -304,5 +363,5 @@ export default function CampaignDetailPage() {
         </Table>
       </div>
     </div>
-  )
+  );
 }

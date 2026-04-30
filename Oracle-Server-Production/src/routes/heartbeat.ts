@@ -3,7 +3,7 @@ import type { HeartbeatPayload } from '../types';
 import { createSession, getSession, updateSession, validateHeartbeat } from '../services/sessionManager';
 import { calculateScore, runBotDetection } from '../services/attentionVerifier';
 import { startStream, tickStream } from '../services/contractCaller';
-import { syncSession, syncTick } from '../services/dashboardSync';
+import { syncSession, syncTick, verifyApiKey } from '../services/dashboardSync';
 
 const router = Router();
 
@@ -11,7 +11,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const payload = req.body as HeartbeatPayload;
 
-    if (payload.apiKey !== process.env.ORACLE_SECRET) {
+    const isKeyValid = await verifyApiKey(payload.apiKey);
+    if (!isKeyValid) {
       res.status(401).json({ error: 'unauthorized' });
       return;
     }
@@ -60,9 +61,9 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       }
     }
 
-    if (session.pendingSeconds >= 10) {
+    if (session.pendingSeconds >= 5) {
       try {
-        const tick = await tickStream(session, 10);
+        const tick = await tickStream(session, 5);
         session.pendingSeconds = 0;
         session.totalPaid += tick.userAmount + tick.publisherAmount;
         syncTick(tick, session);
