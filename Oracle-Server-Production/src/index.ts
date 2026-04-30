@@ -52,7 +52,7 @@ startWatchdog(async (session: SessionState) => {
   }
 });
 
-const port = Number(process.env.ORACLE_PORT ?? "3001");
+const port = Number(process.env.PORT ?? process.env.ORACLE_PORT ?? "3001");
 app.listen(port, () => {
   console.log(`Vista Oracle Server running on port ${port}`);
 });
