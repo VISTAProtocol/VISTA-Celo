@@ -1,6 +1,7 @@
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const userWallet = searchParams.get("userWallet");
+  const chainId = searchParams.get("chainId");
 
   if (!userWallet) {
     return Response.json({ campaigns: [] });
@@ -10,14 +11,15 @@ export async function GET(request) {
     process.env.NEXT_PUBLIC_VISTA_DASHBOARD_URL ?? "http://localhost:3031";
 
   try {
+    const url = new URL(`${dashboardUrl}/api/campaigns/active`);
     // Pass zero-address so the dashboard returns ALL active campaigns without
     // applying user-targeting filters. Publisher-side apps should show every
     // active ad — targeting is an advertiser preference for routing, not a
     // hard gate for which viewers see the ad.
-    const res = await fetch(
-      `${dashboardUrl}/api/campaigns/active?userWallet=0x0000000000000000000000000000000000000000`,
-      { cache: "no-store" },
-    );
+    url.searchParams.set("userWallet", "0x0000000000000000000000000000000000000000");
+    if (chainId) url.searchParams.set("chainId", chainId);
+
+    const res = await fetch(url.toString(), { cache: "no-store" });
 
     if (!res.ok) {
       return Response.json({ campaigns: [] });

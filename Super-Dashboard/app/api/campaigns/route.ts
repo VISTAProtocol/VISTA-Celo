@@ -7,6 +7,7 @@ import { createCampaign, listCampaignsByAdvertiser } from "@/lib/data"
 const campaignSchema = z.object({
   campaignIdOnchain: z.string().min(10),
   advertiserWallet: z.string().min(6),
+  chainId: z.number().int().positive().optional(),
   title: z.string().min(2),
   creativeUrl: z.string().url(),
   targetUrl: z.string().url(),
@@ -40,6 +41,7 @@ export async function POST(request: Request) {
     const campaign = await createCampaign({
       campaignIdOnchain: parsed.campaignIdOnchain,
       advertiserWallet: parsed.advertiserWallet,
+      chainId: parsed.chainId,
       title: parsed.title,
       creativeUrl: parsed.creativeUrl,
       targetUrl: parsed.targetUrl,

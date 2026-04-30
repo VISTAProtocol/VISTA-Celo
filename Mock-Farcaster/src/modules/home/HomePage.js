@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useChainId } from "wagmi";
 import HeroSection from "@/modules/home/components/HeroSection";
 import NavBar from "@/modules/home/components/NavBar";
 import TrendingSection from "@/modules/home/components/TrendingSection";
@@ -21,6 +22,7 @@ function toWalletUser(address) {
 export default function HomePage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
+  const chainId = useChainId();
 
   useEffect(() => {
     let isActive = true;
@@ -58,11 +60,16 @@ export default function HomePage() {
   useEffect(() => {
     if (!currentUser?.address) return;
 
-    fetch(`/api/ads?userWallet=${encodeURIComponent(currentUser.address)}`)
+    const params = new URLSearchParams({
+      userWallet: currentUser.address,
+    });
+    if (chainId) params.set("chainId", String(chainId));
+
+    fetch(`/api/ads?${params.toString()}`)
       .then((r) => r.json())
       .then(({ campaigns: fetched }) => setCampaigns(fetched ?? []))
       .catch(() => {});
-  }, [currentUser?.address]);
+  }, [currentUser?.address, chainId]);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });

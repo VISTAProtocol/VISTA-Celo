@@ -442,6 +442,7 @@ export default function NewCampaignPage() {
         body: JSON.stringify({
           campaignIdOnchain,
           advertiserWallet: address,
+          chainId: celoNetwork.id,
           title,
           creativeUrl: uploadResult.publicUrl,
           targetUrl: landingUrl,
