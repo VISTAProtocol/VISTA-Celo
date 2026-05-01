@@ -20,8 +20,16 @@ process.on("uncaughtException", (err) => {
 
 const app = express();
 
+const corsOptions: cors.CorsOptions = {
+  origin: "*",
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-oracle-secret", "x-api-key"],
+  optionsSuccessStatus: 200,
+};
+
 app.set("trust proxy", 1);
-app.use(cors({ origin: "*" }));
+app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/health", (_req, res) => res.sendStatus(200));
