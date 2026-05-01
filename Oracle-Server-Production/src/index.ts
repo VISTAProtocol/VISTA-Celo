@@ -28,6 +28,10 @@ const corsOptions: cors.CorsOptions = {
 };
 
 app.set("trust proxy", 1);
+app.use((req, _res, next) => {
+  console.log(`[req] ${req.method} ${req.path}`);
+  next();
+});
 app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -72,6 +76,6 @@ startWatchdog(async (session: SessionState) => {
 });
 
 const port = Number(process.env.PORT ?? process.env.ORACLE_PORT ?? "3001");
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Vista Oracle Server running on port ${port}`);
 });
