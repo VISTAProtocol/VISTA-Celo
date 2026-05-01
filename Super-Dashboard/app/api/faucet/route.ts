@@ -3,9 +3,9 @@ import {
   createWalletClient,
   http,
   parseUnits,
-  privateKeyToAccount,
   publicActions,
 } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 import { celo } from "viem/chains";
 
 const MOCK_USDC_ABI = [
