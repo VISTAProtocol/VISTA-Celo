@@ -2,10 +2,14 @@ import { createPublicClient, createWalletClient, http } from "viem";
 import { celo } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 
-const required = ["ORACLE_PRIVATE_KEY", "RPC_URL"];
-for (const key of required) {
-  if (!process.env[key]) throw new Error(`Missing required env var: ${key}`);
+if (!process.env.ORACLE_PRIVATE_KEY) {
+  throw new Error("Missing required env var: ORACLE_PRIVATE_KEY");
 }
+
+const RPC_URL =
+  process.env.RPC_URL ||
+  process.env.NEXT_PUBLIC_CELO_RPC_URL ||
+  "https://forno.celo.org";
 
 export const account = privateKeyToAccount(
   process.env.ORACLE_PRIVATE_KEY as `0x${string}`,
@@ -13,13 +17,13 @@ export const account = privateKeyToAccount(
 
 export const publicClient = createPublicClient({
   chain: celo,
-  transport: http(process.env.RPC_URL),
+  transport: http(RPC_URL),
 });
 
 export const walletClient = createWalletClient({
   account,
   chain: celo,
-  transport: http(process.env.RPC_URL),
+  transport: http(RPC_URL),
 });
 
 export const VISTA_STREAM_ABI = [
