@@ -1,5 +1,5 @@
 import { keccak256, toBytes, decodeEventLog } from 'viem';
-import { publicClient, walletClient, account, VISTA_STREAM_ABI, VISTA_STREAM_ADDRESS } from '../config';
+import { publicClient, walletClient, VISTA_STREAM_ABI, VISTA_STREAM_ADDRESS } from '../config';
 import type { SessionState, TickResult } from '../types';
 
 export function toBytes32(str: string): `0x${string}` {
@@ -18,9 +18,6 @@ export async function startStream(session: SessionState): Promise<string> {
         session.userWallet as `0x${string}`,
         session.publisherWallet as `0x${string}`,
       ],
-      gas: 250_000n,
-      maxFeePerGas: 300_000_000_000n,
-      maxPriorityFeePerGas: 5_000_000_000n,
     });
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status === 'reverted') {
@@ -57,117 +54,73 @@ export async function tickStream(session: SessionState, seconds: number): Promis
     };
   }
 
-  const attemptTick = async (): Promise<TickResult> => {
-    // Simulate first to surface the actual revert reason before spending gas
-    await publicClient.simulateContract({
-      address: VISTA_STREAM_ADDRESS,
-      abi: VISTA_STREAM_ABI,
-      functionName: 'tickStream',
-      args: [toBytes32(session.sessionId), BigInt(effectiveSeconds)],
-      account,
-    });
+  const hash = await walletClient.writeContract({
+    address: VISTA_STREAM_ADDRESS,
+    abi: VISTA_STREAM_ABI,
+    functionName: 'tickStream',
+    args: [toBytes32(session.sessionId), BigInt(effectiveSeconds)],
+  });
 
-    const hash = await walletClient.writeContract({
-      address: VISTA_STREAM_ADDRESS,
-      abi: VISTA_STREAM_ABI,
-      functionName: 'tickStream',
-      args: [toBytes32(session.sessionId), BigInt(effectiveSeconds)],
-      gas: 550_000n,
-      maxFeePerGas: 300_000_000_000n,
-      maxPriorityFeePerGas: 5_000_000_000n,
-    });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-
-    if (receipt.status === 'reverted') {
-      throw new Error(`tickStream tx reverted (${hash}) — campaign may be out of budget or inactive`);
-    }
-
-    let userAmount = 0n;
-    let publisherAmount = 0n;
-    let decoded = false;
-
-    console.log(`[${session.sessionId}] tickStream receipt has ${receipt.logs.length} log(s) to decode`);
-
-    for (const log of receipt.logs) {
-      try {
-        const decodedLog = decodeEventLog({
-          abi: VISTA_STREAM_ABI,
-          eventName: 'StreamTick',
-          data: log.data,
-          topics: log.topics,
-        });
-        userAmount = decodedLog.args.userAmount;
-        publisherAmount = decodedLog.args.publisherAmount;
-        decoded = true;
-        console.log(`[${session.sessionId}] StreamTick decoded: userAmount=${userAmount} publisherAmount=${publisherAmount}`);
-        break;
-      } catch {
-        // log belongs to a different event, skip
-      }
-    }
-
-    if (!decoded) {
-      console.warn(
-        `[${session.sessionId}] WARNING: StreamTick event NOT found in ${receipt.logs.length} log(s). ` +
-        `Raw logs: ${JSON.stringify(receipt.logs.map(l => ({ address: l.address, topics: l.topics })))}`
-      );
-    }
-
-    console.log(`[${session.sessionId}] TICK ${effectiveSeconds}s txHash:${hash} userAmount:${userAmount} publisherAmount:${publisherAmount}`);
-
-    return {
-      sessionId: session.sessionId,
-      secondsElapsed: effectiveSeconds,
-      txHash: hash,
-      userAmount,
-      publisherAmount,
-    };
-  };
-
-  try {
-    return await attemptTick();
-  } catch (err) {
-    console.error(`[${session.sessionId}] tickStream first attempt failed, retrying in 3s`, err);
-    await new Promise(r => setTimeout(r, 3000));
-    return await attemptTick();
+  if (receipt.status === 'reverted') {
+    throw new Error(`tickStream tx reverted (${hash}) — campaign may be out of budget or inactive`);
   }
+
+  let userAmount = 0n;
+  let publisherAmount = 0n;
+  let decoded = false;
+
+  console.log(`[${session.sessionId}] tickStream receipt has ${receipt.logs.length} log(s) to decode`);
+
+  for (const log of receipt.logs) {
+    try {
+      const decodedLog = decodeEventLog({
+        abi: VISTA_STREAM_ABI,
+        eventName: 'StreamTick',
+        data: log.data,
+        topics: log.topics,
+      });
+      userAmount = decodedLog.args.userAmount;
+      publisherAmount = decodedLog.args.publisherAmount;
+      decoded = true;
+      console.log(`[${session.sessionId}] StreamTick decoded: userAmount=${userAmount} publisherAmount=${publisherAmount}`);
+      break;
+    } catch {
+      // log belongs to a different event, skip
+    }
+  }
+
+  if (!decoded) {
+    console.warn(
+      `[${session.sessionId}] WARNING: StreamTick event NOT found in ${receipt.logs.length} log(s). ` +
+      `This means the contract did not emit StreamTick — likely escrow is empty or not approved. ` +
+      `Raw logs: ${JSON.stringify(receipt.logs.map(l => ({ address: l.address, topics: l.topics })))}`
+    );
+  }
+
+  console.log(`[${session.sessionId}] TICK ${effectiveSeconds}s txHash:${hash} userAmount:${userAmount} publisherAmount:${publisherAmount}`);
+
+  return {
+    sessionId: session.sessionId,
+    secondsElapsed: effectiveSeconds,
+    txHash: hash,
+    userAmount,
+    publisherAmount,
+  };
 }
 
 export async function endStream(session: SessionState): Promise<string> {
-  const attemptEnd = async (): Promise<string> => {
-    // Simulate first to surface the actual revert reason
-    await publicClient.simulateContract({
-      address: VISTA_STREAM_ADDRESS,
-      abi: VISTA_STREAM_ABI,
-      functionName: 'endStream',
-      args: [toBytes32(session.sessionId)],
-      account,
-    });
-
-    const hash = await walletClient.writeContract({
-      address: VISTA_STREAM_ADDRESS,
-      abi: VISTA_STREAM_ABI,
-      functionName: 'endStream',
-      args: [toBytes32(session.sessionId)],
-      gas: 350_000n,
-      maxFeePerGas: 300_000_000_000n,
-      maxPriorityFeePerGas: 5_000_000_000n,
-    });
-
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    if (receipt.status === 'reverted') {
-      throw new Error(`endStream tx reverted (${hash})`);
-    }
-    console.log(`[${session.sessionId}] END totalSeconds:${session.validSeconds} txHash:${hash}`);
-    return hash;
-  };
-
-  try {
-    return await attemptEnd();
-  } catch (err) {
-    console.error(`[${session.sessionId}] endStream first attempt failed, retrying in 3s`, err);
-    await new Promise(r => setTimeout(r, 3000));
-    return await attemptEnd();
+  const hash = await walletClient.writeContract({
+    address: VISTA_STREAM_ADDRESS,
+    abi: VISTA_STREAM_ABI,
+    functionName: 'endStream',
+    args: [toBytes32(session.sessionId)],
+  });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  if (receipt.status === 'reverted') {
+    throw new Error(`endStream tx reverted (${hash})`);
   }
+  console.log(`[${session.sessionId}] END totalSeconds:${session.validSeconds} txHash:${hash}`);
+  return hash;
 }

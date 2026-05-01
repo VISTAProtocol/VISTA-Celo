@@ -35,25 +35,20 @@ router.post('/end', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    try {
-      if (session.pendingSeconds > 0) {
-        try {
-          const tick = await tickStream(session, session.pendingSeconds);
-          session.pendingSeconds = 0;
-          session.totalPaid += tick.userAmount + tick.publisherAmount;
-          syncTick(tick, session);
-        } catch (tickErr) {
-          console.error(`[${sessionId}] final tickStream failed, skipping to endStream`, tickErr);
-        }
+    if (session.pendingSeconds > 0) {
+      try {
+        const tick = await tickStream(session, session.pendingSeconds);
+        session.pendingSeconds = 0;
+        session.totalPaid += tick.userAmount + tick.publisherAmount;
+        syncTick(tick, session);
+      } catch (tickErr) {
+        console.error(`[${sessionId}] final tickStream failed`, tickErr);
       }
-
-      const txHash = await endStream(session);
-      syncEnd(session, txHash);
-    } catch (chainErr) {
-      console.error(`[${sessionId}] endStream failed`, chainErr);
-    } finally {
-      endSession(sessionId);
     }
+
+    const txHash = await endStream(session);
+    syncEnd(session, txHash);
+    endSession(sessionId);
 
     res.status(200).json({ success: true, totalSeconds: session.validSeconds });
   } catch (err) {

@@ -133,7 +133,6 @@ export const roleNavigation: Record<
   ],
   publisher: [
     { label: "Dashboard", href: "/publisher/dashboard" },
-    { label: "Analytics", href: "/publisher/analytics" },
   ],
   user: [
     { label: "Dashboard", href: "/user/dashboard" },

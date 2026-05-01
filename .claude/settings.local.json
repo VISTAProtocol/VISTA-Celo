@@ -14,7 +14,15 @@
       "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo diff --cached --name-only)",
       "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Smart-Contract-SDK/lib/)",
       "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Smart-Contract/lib/)",
-      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Oracle-Server-Production/deployments.json)"
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo ls-files Oracle-Server-Production/deployments.json)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo add Oracle-Server-Production/src/index.ts)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo commit -m ' *)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo push origin main)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo add Oracle-Server-Production/src/config.ts Oracle-Server-Production/src/index.ts Oracle-Server-Production/package.json Oracle-Server-Production/railway.toml Oracle-Server-Production/tsconfig.json)",
+      "Bash(git -C /Users/scientivan/Programming/VISTA/Vista-Celo add Oracle-Server-Production/src/config.ts Oracle-Server-Production/src/services/dashboardSync.ts)"
     ]
   }
 }

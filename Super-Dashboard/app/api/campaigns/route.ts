@@ -16,6 +16,7 @@ const campaignSchema = z.object({
   targetMinAge: z.number().int().nullable().optional(),
   targetMaxAge: z.number().int().nullable().optional(),
   targetLocations: z.array(z.string()).default([]),
+  chain: z.string().optional(),
 })
 
 export async function GET(request: Request) {
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
       targetMinAge: parsed.targetMinAge ?? null,
       targetMaxAge: parsed.targetMaxAge ?? null,
       targetLocations: parsed.targetLocations,
+      chain: parsed.chain,
     })
 
     return jsonOk(campaign, 201)

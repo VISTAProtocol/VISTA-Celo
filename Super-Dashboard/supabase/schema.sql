@@ -38,6 +38,7 @@ create table if not exists public.campaigns (
   target_max_age integer null,
   target_locations text[] null,
   active boolean not null default true,
+  chain text not null default 'celo',
   created_at timestamptz not null default now()
 );
 

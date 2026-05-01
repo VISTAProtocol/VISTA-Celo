@@ -196,6 +196,7 @@ export default function NewCampaignPage() {
     (typeof locationOptions)[number][]
   >(["Jakarta", "Bandung"]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMinting, setIsMinting] = useState(false);
   const [launchResult, setLaunchResult] = useState<{
     txHash: string;
     campaign: CampaignRecord;
@@ -465,6 +466,30 @@ export default function NewCampaignPage() {
       );
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleMintUSDC() {
+    if (!address) {
+      toast.error("Connect your wallet first.");
+      return;
+    }
+    try {
+      setIsMinting(true);
+      const res = await fetch("/api/faucet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address, amount: 1000 }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Mint failed.");
+      toast.success("1,000 mock USDC minted to your wallet!");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to mint USDC.",
+      );
+    } finally {
+      setIsMinting(false);
     }
   }
 
@@ -750,7 +775,19 @@ export default function NewCampaignPage() {
                 </div>
 
                 <div className="space-y-2 sm:col-span-2">
-                  <Label>Total budget (USDC)</Label>
+                  <div className="flex items-center justify-between">
+                    <Label>Total budget (USDC)</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={isMinting || !address}
+                      onClick={handleMintUSDC}
+                      className="h-7 px-2.5 text-xs"
+                    >
+                      {isMinting ? "Minting..." : "Mint Testnet USDC"}
+                    </Button>
+                  </div>
                   <Input
                     disabled={uploadState !== "success"}
                     min="0"

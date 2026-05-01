@@ -57,6 +57,7 @@ export interface CampaignRecord {
   target_max_age: number | null
   target_locations: string[] | null
   active: boolean
+  chain: string
   created_at: string
 }
 

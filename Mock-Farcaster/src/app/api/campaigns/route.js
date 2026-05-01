@@ -25,7 +25,10 @@ export async function GET(request) {
 
     const data = await res.json();
     const campaigns = Array.isArray(data) ? data : (data.campaigns ?? []);
-    return Response.json({ campaigns });
+    const expectedChain = process.env.NEXT_PUBLIC_VISTA_CHAIN ?? "celo";
+    const filteredCampaigns = campaigns.filter((c) => c.chain === expectedChain);
+    
+    return Response.json({ campaigns: filteredCampaigns });
   } catch (err) {
     console.error("[API/campaigns] Failed to fetch campaigns:", err);
     return Response.json({ campaigns: [] });

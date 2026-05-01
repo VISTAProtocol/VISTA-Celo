@@ -1,19 +1,23 @@
-import { z } from "zod"
+import { type NextRequest } from "next/server";
+import { getPublishersByWallet } from "@/lib/data";
+import { jsonError, jsonOk } from "@/lib/http";
 
-import { jsonError, jsonOk } from "@/lib/api"
-import { createPublisher } from "@/lib/data"
-
-const schema = z.object({
-  walletAddress: z.string().min(6),
-  platformName: z.string().min(2),
-})
-
-export async function POST(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const parsed = schema.parse(await request.json())
-    const publisher = await createPublisher(parsed)
-    return jsonOk(publisher, 201)
+    const { searchParams } = new URL(request.url);
+    const wallet = searchParams.get("wallet");
+
+    if (!wallet) {
+      return jsonError("Wallet address is required", 400);
+    }
+
+    const publishers = await getPublishersByWallet(wallet);
+    return jsonOk(publishers);
   } catch (error) {
-    return jsonError(error)
+    console.error("[GET /api/publishers]", error);
+    return jsonError(
+      error instanceof Error ? error.message : "Internal Server Error",
+      500,
+    );
   }
 }

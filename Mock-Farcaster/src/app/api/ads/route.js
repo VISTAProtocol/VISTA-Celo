@@ -20,7 +20,11 @@ export async function GET(request) {
     }
 
     const data = await res.json();
-    return Response.json({ campaigns: data.campaigns ?? [] });
+    const campaigns = data.campaigns ?? [];
+    const expectedChain = process.env.NEXT_PUBLIC_VISTA_CHAIN ?? "celo";
+    const filteredCampaigns = campaigns.filter((c) => c.chain === expectedChain);
+    
+    return Response.json({ campaigns: filteredCampaigns });
   } catch {
     return Response.json({ campaigns: [] });
   }

@@ -1,6 +1,6 @@
 # VISTA Oracle Server
 
-Receives attention heartbeats from the browser SDK and triggers smart contract payments on Celo Mainnet. Calls `VistaStream.startStream`, `tickStream`, and `endStream` on the oracle wallet's behalf.
+Receives attention heartbeats from the browser SDK and triggers smart contract payments on Base Sepolia. Calls `VistaStream.startStream`, `tickStream`, and `endStream` on the oracle wallet's behalf.
 
 ## Setup
 
@@ -8,7 +8,7 @@ Receives attention heartbeats from the browser SDK and triggers smart contract p
 
 ```bash
 cd ../vista-contracts
-forge script script/Deploy.s.sol --broadcast --rpc-url $CELO_RPC_URL --private-key $PRIVATE_KEY
+forge script script/Deploy.s.sol --broadcast --rpc-url $BASE_RPC_URL --private-key $PRIVATE_KEY
 cp deployments.json ../oracle-server/deployments.json
 ```
 
@@ -25,7 +25,7 @@ npm install
 cp .env.example .env
 # Fill in:
 #   ORACLE_PRIVATE_KEY  — private key of wallet set as authorizedOracle in VistaStream
-#   CELO_RPC_URL       — Celo Mainnet RPC endpoint
+#   BASE_RPC_URL       — Base Sepolia RPC endpoint
 #   ORACLE_SECRET       — shared secret for SDK authentication
 ```
 
@@ -33,7 +33,7 @@ cp .env.example .env
 
 ```bash
 cast send $VISTA_STREAM_ADDRESS "setAuthorizedOracle(address)" $ORACLE_WALLET \
-  --rpc-url $CELO_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY
+  --rpc-url $BASE_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY
 ```
 
 ## Run
