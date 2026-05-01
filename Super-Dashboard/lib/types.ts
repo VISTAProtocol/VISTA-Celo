@@ -46,7 +46,6 @@ export interface CampaignRecord {
   id: string
   campaign_id_onchain: string
   advertiser_wallet: string
-  chain_id: number
   title: string
   creative_url: string
   target_url: string

@@ -50,7 +50,6 @@ function normalizeCampaign(row: Record<string, unknown>): CampaignRecord {
     id: String(row.id),
     campaign_id_onchain: String(row.campaign_id_onchain),
     advertiser_wallet: normalizeWallet(String(row.advertiser_wallet)),
-    chain_id: row.chain_id == null ? 42220 : Number(row.chain_id),
     title: String(row.title),
     creative_url: String(row.creative_url),
     target_url: String(row.target_url),
@@ -668,7 +667,6 @@ export async function createAdvertiser(input: {
 export async function createCampaign(input: {
   campaignIdOnchain: string;
   advertiserWallet: string;
-  chainId?: number;
   title: string;
   creativeUrl: string;
   targetUrl: string;
@@ -683,7 +681,6 @@ export async function createCampaign(input: {
     id: crypto.randomUUID(),
     campaign_id_onchain: input.campaignIdOnchain,
     advertiser_wallet: normalizeWallet(input.advertiserWallet),
-    chain_id: input.chainId ?? 42220,
     title: input.title.trim(),
     creative_url: input.creativeUrl.trim(),
     target_url: input.targetUrl.trim(),
@@ -1236,7 +1233,6 @@ export async function createReceipt(payload: OracleReceiptPayload) {
 
 export async function getActiveCampaignsForUser(
   userWallet: string,
-  chainId?: number,
 ): Promise<ActiveCampaignResult> {
   const user = await getUser(userWallet);
   const supabase = createServerSupabaseClient();
@@ -1245,18 +1241,12 @@ export async function getActiveCampaignsForUser(
     throw new Error("Supabase client is not configured");
   }
 
-  let query = supabase
+  const { data, error } = await supabase
     .from("campaigns")
     .select("*")
     .eq("active", true)
     .gt("remaining_budget", 0)
     .order("created_at", { ascending: false });
-
-  if (chainId != null) {
-    query = query.eq("chain_id", chainId);
-  }
-
-  const { data, error } = await query;
 
   if (error) {
     throw new Error(error.message);

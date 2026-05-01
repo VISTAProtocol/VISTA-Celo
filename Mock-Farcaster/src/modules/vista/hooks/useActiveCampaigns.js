@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export function useActiveCampaigns(userWallet, chainId) {
+export function useActiveCampaigns(userWallet) {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,12 +14,10 @@ export function useActiveCampaigns(userWallet, chainId) {
 
     const fetchCampaigns = async () => {
       try {
-        const params = new URLSearchParams({ userWallet });
-        if (chainId) params.set("chainId", String(chainId));
-
-        const res = await fetch(`/api/campaigns?${params.toString()}`, {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `/api/campaigns?userWallet=${encodeURIComponent(userWallet)}`,
+          { cache: "no-store" }
+        );
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to fetch campaigns");
         setCampaigns(data.campaigns || []);
@@ -33,7 +31,7 @@ export function useActiveCampaigns(userWallet, chainId) {
     };
 
     fetchCampaigns();
-  }, [userWallet, chainId]);
+  }, [userWallet]);
 
   return { campaigns, loading, error };
 }

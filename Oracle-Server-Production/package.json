@@ -2,9 +2,12 @@
   "name": "vista-oracle-server",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsup src/index.ts --format cjs --target node18 --out-dir dist --no-dts",
+    "build": "tsup src/index.ts --format cjs --target node20 --out-dir dist --no-dts",
     "start": "node dist/index.js"
   },
   "dependencies": {

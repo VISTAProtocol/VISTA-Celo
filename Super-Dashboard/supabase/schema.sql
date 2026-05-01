@@ -27,7 +27,6 @@ create table if not exists public.campaigns (
   id uuid primary key default gen_random_uuid(),
   campaign_id_onchain text unique not null,
   advertiser_wallet text not null,
-  chain_id integer not null default 42220,
   title text not null,
   creative_url text not null,
   target_url text not null,
@@ -84,7 +83,6 @@ create index if not exists idx_publishers_wallet on public.publishers (wallet_ad
 create index if not exists idx_advertisers_wallet on public.advertisers (wallet_address);
 create index if not exists idx_campaigns_advertiser_wallet on public.campaigns (advertiser_wallet);
 create index if not exists idx_campaigns_active on public.campaigns (active);
-create index if not exists idx_campaigns_chain_id on public.campaigns (chain_id);
 create index if not exists idx_sessions_campaign_id_onchain on public.sessions (campaign_id_onchain);
 create index if not exists idx_sessions_user_wallet on public.sessions (user_wallet);
 create index if not exists idx_sessions_publisher_wallet on public.sessions (publisher_wallet);
