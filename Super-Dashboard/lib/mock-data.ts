@@ -80,6 +80,7 @@ export const mockDb: {
       target_max_age: 35,
       target_locations: ["Jakarta", "Bandung", "Singapore"],
       active: true,
+      chain: "celo",
       created_at: "2026-04-18T09:00:00.000Z",
     },
     {
@@ -98,6 +99,7 @@ export const mockDb: {
       target_max_age: 44,
       target_locations: ["Jakarta"],
       active: false,
+      chain: "celo",
       created_at: "2026-04-10T06:20:00.000Z",
     },
   ],

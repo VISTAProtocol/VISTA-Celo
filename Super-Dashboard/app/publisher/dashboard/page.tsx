@@ -28,7 +28,7 @@ import { MetricChartCard } from "@/components/metric-chart-card";
 import { PageHeader } from "@/components/page-header";
 import { StatCard } from "@/components/stat-card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -438,9 +438,9 @@ export default function PublisherDashboardPage() {
           <p className="mt-2 text-sm text-muted-foreground max-w-sm">
             Register your first platform to generate an API key and start tracking ad attention.
           </p>
-          <Button asChild className="mt-6">
-            <Link href="/publisher/onboarding">Register Platform</Link>
-          </Button>
+          <Link href="/publisher/onboarding" className={buttonVariants({ className: "mt-6" })}>
+            Register Platform
+          </Link>
         </div>
       );
     }
@@ -449,9 +449,9 @@ export default function PublisherDashboardPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold tracking-tight">Your Platforms</h2>
-          <Button asChild variant="outline">
-            <Link href="/publisher/onboarding">Register new platform</Link>
-          </Button>
+          <Link href="/publisher/onboarding" className={buttonVariants({ variant: "outline" })}>
+            Register new platform
+          </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {platforms.map((platform) => (
@@ -601,7 +601,7 @@ export default function PublisherDashboardPage() {
               <StatCard
                 icon={MonitorPlay}
                 title="Campaigns tracked"
-                value={analyticsData.campaignsTracked}
+                value={analyticsData.breakdownByCampaign.length}
               />
               <StatCard
                 icon={TimerReset}
@@ -615,7 +615,11 @@ export default function PublisherDashboardPage() {
               />
             </div>
             <MetricChartCard
-              data={analyticsData.topTimeSlots}
+              data={analyticsData.topTimeSlots.map((slot) => ({
+                date: slot.hour.toString(),
+                label: slot.label,
+                value: slot.revenue,
+              }))}
               title="Top performing time slots"
               description="Most active viewing hours based on historical data."
               kind="bar"
@@ -635,12 +639,12 @@ export default function PublisherDashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {analyticsData.revenueByCampaign.map((item) => (
-                    <TableRow key={item.campaignId}>
+                  {analyticsData.breakdownByCampaign.map((item) => (
+                    <TableRow key={item.campaignIdOnchain}>
                       <TableCell className="font-medium">
                         <div>
                           <p>{item.campaignTitle}</p>
-                          <p className="text-xs text-muted-foreground font-mono">{truncateHash(item.campaignId)}</p>
+                          <p className="text-xs text-muted-foreground font-mono">{truncateHash(item.campaignIdOnchain)}</p>
                         </div>
                       </TableCell>
                       <TableCell>{item.impressions}</TableCell>
@@ -648,7 +652,7 @@ export default function PublisherDashboardPage() {
                       <TableCell className="text-right">{formatUsdc(item.revenue)} USDC</TableCell>
                     </TableRow>
                   ))}
-                  {analyticsData.revenueByCampaign.length === 0 && (
+                  {analyticsData.breakdownByCampaign.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
                         No campaign revenue data yet.

@@ -12,18 +12,20 @@ export function StatCard({
   className,
 }: {
   title: string
-  value: number
+  value: number | string
   hint?: string
   icon: LucideIcon
   format?: "number" | "usdc" | "compact"
   className?: string
 }) {
   const displayValue =
-    format === "usdc"
-      ? `${formatUsdc(value)} USDC`
-      : format === "compact"
-        ? formatCompactNumber(value)
-        : value.toLocaleString("en-US")
+    typeof value === "string"
+      ? value
+      : format === "usdc"
+        ? `${formatUsdc(value)} USDC`
+        : format === "compact"
+          ? formatCompactNumber(value)
+          : value.toLocaleString("en-US")
 
   return (
     <Card className={cn("bg-card/90", className)}>
