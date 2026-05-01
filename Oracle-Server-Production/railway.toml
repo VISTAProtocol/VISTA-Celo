@@ -1,8 +1,10 @@
 [build]
-builder = "RAILPACK"
-buildCommand = "bun run build"
+builder = "nixpacks"
+buildCommand = "npm install && npm run build"
 
 [deploy]
-startCommand = "bun start"
+startCommand = "npm start"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3

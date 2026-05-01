@@ -14,6 +14,9 @@ const app = express();
 app.set("trust proxy", 1);
 app.use(cors({ origin: "*" }));
 app.use(express.json());
+
+app.get("/health", (_req, res) => res.sendStatus(200));
+
 app.use(
   rateLimit({
     windowMs: 1000,
@@ -22,7 +25,6 @@ app.use(
     legacyHeaders: false,
   }),
 );
-
 app.use("/heartbeat", heartbeatRouter);
 app.use("/session", sessionRouter);
 
