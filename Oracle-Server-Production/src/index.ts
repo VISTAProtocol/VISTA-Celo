@@ -28,10 +28,6 @@ const corsOptions: cors.CorsOptions = {
 };
 
 app.set("trust proxy", 1);
-app.use((req, _res, next) => {
-  console.log(`[req] ${req.method} ${req.path}`);
-  next();
-});
 app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -61,7 +57,7 @@ startWatchdog(async (session: SessionState) => {
       const tick = await tickStream(session, session.pendingSeconds);
       session.pendingSeconds = 0;
       session.totalPaid += tick.userAmount + tick.publisherAmount;
-      await syncTick(tick, session); // await: tick must be in DB before syncEnd reads it
+      await syncTick(tick, session);
     }
     const txHash = await endStream(session);
     await syncEnd(session, txHash);
