@@ -9,6 +9,15 @@ import { tickStream, endStream } from "./services/contractCaller";
 import { syncTick, syncEnd } from "./services/dashboardSync";
 import type { SessionState } from "./types";
 
+process.on("unhandledRejection", (reason) => {
+  console.error("[FATAL] Unhandled promise rejection:", reason);
+  process.exit(1);
+});
+process.on("uncaughtException", (err) => {
+  console.error("[FATAL] Uncaught exception:", err);
+  process.exit(1);
+});
+
 const app = express();
 
 app.set("trust proxy", 1);
